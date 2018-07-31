@@ -1,14 +1,12 @@
 package store
 
 import (
-	"math/rand"
 	"testing"
 	"time"
 
 	"github.com/go-redis/redis"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
-	"gitlab.dreau.fr/home/onetimesecret/conf"
+	"gitlab.dreau.fr/home/onetimesecret/helpers/tests"
 )
 
 var (
@@ -16,20 +14,23 @@ var (
 )
 
 func Test_StoreInit_OK(t *testing.T) {
-	assert, store := SetupStoreTest(t)
+	assert, config := tests.SetupTest(t)
+	store := New(config.Store)
 
 	err := store.Init()
 	assert.NoError(err)
 }
 func Test_StoreInit_InvalidAddr(t *testing.T) {
-	assert, store := SetupStoreTest(t)
-	store.config.Addr = "127.0.0.1:9999"
+	assert, config := tests.SetupTest(t)
+	config.Store.Addr = "127.0.0.1:9999"
+	store := New(config.Store)
 
 	err := store.Init()
-	assert.NoError(err)
+	assert.EqualError(err, "dial tcp 127.0.0.1:9999: getsockopt: connection refused")
 }
+
 func Test_StoreStoreSecret_OK(t *testing.T) {
-	assert, store := SetupStoreTest(t)
+	assert, store := SetupValidStore(t)
 
 	key, err := store.StoreSecret("top-secret", 10*time.Second)
 	assert.NoError(err)
@@ -38,7 +39,7 @@ func Test_StoreStoreSecret_OK(t *testing.T) {
 }
 
 func Test_StoreGetSecret_OK(t *testing.T) {
-	assert, store := SetupStoreTest(t)
+	assert, store := SetupValidStore(t)
 
 	secret, err := store.GetSecret(existingSecretKey)
 	assert.NoError(err)
@@ -46,25 +47,21 @@ func Test_StoreGetSecret_OK(t *testing.T) {
 }
 
 func Test_StoreGetSecret_Missing(t *testing.T) {
-	assert, store := SetupStoreTest(t)
+	assert, store := SetupValidStore(t)
 
 	secret, err := store.GetSecret("non-existing key")
 	assert.Equal(err, redis.Nil)
 	assert.Empty(secret)
 }
 
-func SetupStoreTest(t require.TestingT) (*require.Assertions, *Store) {
-	// freeze the random generator
-	rand.Seed(1)
-	// filter all logs from the output
-	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
-
-	assert := require.New(t)
-	config := conf.New()
+func SetupValidStore(t require.TestingT) (*require.Assertions, *Store) {
+	assert, config := tests.SetupTest(t)
 	config.Store.Flush = true
-	store := New(config.Store)
 
-	var err error
+	store := New(config.Store)
+	err := store.Init()
+	assert.NoError(err)
+
 	existingSecretKey, err = store.StoreSecret("existing top-secret", 10*time.Second)
 	assert.NoError(err)
 	return assert, store

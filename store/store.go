@@ -30,14 +30,15 @@ func New(config conf.StoreConfig) *Store {
 Init : establishes a connection to the redis server.
 */
 func (s *Store) Init() error {
-	if s.config.Flush {
-		err := s.redisClient.FlushDB().Err()
-		if err != nil {
-			return err
-		}
-	}
 	err := s.redisClient.Ping().Err()
-	return err
+	if err != nil {
+		return err
+	}
+	if s.config.Flush {
+		err = s.redisClient.FlushDB().Err()
+		return err
+	}
+	return nil
 }
 
 func (s *Store) StoreSecret(secret string, expiration time.Duration) (string, error) {
