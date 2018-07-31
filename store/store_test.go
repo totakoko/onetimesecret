@@ -35,7 +35,25 @@ func Test_StoreStoreSecret_OK(t *testing.T) {
 	key, err := store.StoreSecret("top-secret", 10*time.Second)
 	assert.NoError(err)
 	assert.Equal("OHoF8iVd", key) // first call to rand is constant with the same seed
-	// assert.Equal("ONRhfKsU", key) // first call to rand is constant with the same seed
+}
+
+func Test_Store_Expiration(t *testing.T) {
+	assert, store := SetupValidStore(t)
+
+	expectedKey := "OHoF8iVd"
+	key, err := store.StoreSecret("top-secret", 50*time.Millisecond)
+	assert.NoError(err)
+	assert.Equal(expectedKey, key) // first call to rand is constant with the same seed
+	time.Sleep(30 * time.Millisecond)
+
+	secret, err := store.GetSecret(expectedKey)
+	assert.NoError(err)
+	assert.Equal("top-secret", secret)
+	time.Sleep(30 * time.Millisecond)
+
+	secret, err = store.GetSecret(expectedKey)
+	assert.Equal(redis.Nil, err)
+	assert.Empty(secret)
 }
 
 func Test_StoreGetSecret_OK(t *testing.T) {
@@ -50,7 +68,7 @@ func Test_StoreGetSecret_Missing(t *testing.T) {
 	assert, store := SetupValidStore(t)
 
 	secret, err := store.GetSecret("non-existing key")
-	assert.Equal(err, redis.Nil)
+	assert.Equal(redis.Nil, err)
 	assert.Empty(secret)
 }
 
