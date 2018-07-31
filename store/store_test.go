@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-redis/redis"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
-	"gitlab.dreau.fr/home/onetimesecret/common"
 	"gitlab.dreau.fr/home/onetimesecret/conf"
 )
 
@@ -15,6 +15,19 @@ var (
 	existingSecretKey string
 )
 
+func Test_StoreInit_OK(t *testing.T) {
+	assert, store := SetupStoreTest(t)
+
+	err := store.Init()
+	assert.NoError(err)
+}
+func Test_StoreInit_InvalidAddr(t *testing.T) {
+	assert, store := SetupStoreTest(t)
+	store.config.Addr = "127.0.0.1:9999"
+
+	err := store.Init()
+	assert.NoError(err)
+}
 func Test_StoreStoreSecret_OK(t *testing.T) {
 	assert, store := SetupStoreTest(t)
 
@@ -32,9 +45,20 @@ func Test_StoreGetSecret_OK(t *testing.T) {
 	assert.Equal("existing top-secret", secret)
 }
 
-func SetupStoreTest(t require.TestingT) (*require.Assertions, common.Store) {
+func Test_StoreGetSecret_Missing(t *testing.T) {
+	assert, store := SetupStoreTest(t)
+
+	secret, err := store.GetSecret("non-existing key")
+	assert.Equal(err, redis.Nil)
+	assert.Empty(secret)
+}
+
+func SetupStoreTest(t require.TestingT) (*require.Assertions, *Store) {
+	// freeze the random generator
 	rand.Seed(1)
+	// filter all logs from the output
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
 	assert := require.New(t)
 	config := conf.New()
 	config.Store.Flush = true

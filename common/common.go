@@ -5,6 +5,7 @@ import (
 )
 
 type Store interface {
+	Init() error
 	StoreSecret(secret string, expiration time.Duration) (string, error)
 	GetSecret(id string) (string, error)
 }
