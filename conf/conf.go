@@ -20,14 +20,13 @@ type StoreConfig struct {
 	KeyLength int    `default:"8"`
 }
 
-func New() Configuration {
+func New() (Configuration, error) {
 	zerolog.TimeFieldFormat = ""
 	var conf Configuration
 	err := envconfig.Process("OTS", &conf)
 	if err != nil {
-		log.Fatal().Err(err)
+		return Configuration{}, err
 	}
 	log.Debug().Msgf("Conf %+v", conf)
-
-	return conf
+	return conf, err
 }

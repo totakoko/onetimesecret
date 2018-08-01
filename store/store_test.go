@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/stretchr/testify/require"
+	"gitlab.dreau.fr/home/onetimesecret/conf"
 	"gitlab.dreau.fr/home/onetimesecret/helpers/tests"
 )
 
@@ -14,14 +15,16 @@ var (
 )
 
 func Test_StoreInit_OK(t *testing.T) {
-	assert, config := tests.SetupTest(t)
+	assert := tests.SetupTest(t)
+	config, _ := conf.New()
 	store := New(config.Store)
 
 	err := store.Init()
 	assert.NoError(err)
 }
 func Test_StoreInit_InvalidAddr(t *testing.T) {
-	assert, config := tests.SetupTest(t)
+	assert := tests.SetupTest(t)
+	config, _ := conf.New()
 	config.Store.Addr = "127.0.0.1:9999"
 	store := New(config.Store)
 
@@ -73,11 +76,13 @@ func Test_StoreGetSecret_Missing(t *testing.T) {
 }
 
 func SetupValidStore(t require.TestingT) (*require.Assertions, *Store) {
-	assert, config := tests.SetupTest(t)
+	assert := tests.SetupTest(t)
+	config, err := conf.New()
+	assert.NoError(err)
 	config.Store.Flush = true
 
 	store := New(config.Store)
-	err := store.Init()
+	err = store.Init()
 	assert.NoError(err)
 
 	existingSecretKey, err = store.StoreSecret("existing top-secret", 10*time.Second)

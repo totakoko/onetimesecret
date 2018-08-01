@@ -1,9 +1,7 @@
 package main
 
 import (
-	"math/rand"
 	"strconv"
-	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -13,26 +11,34 @@ import (
 )
 
 func main() {
+	err := startServer()
+	if err != nil {
+		log.Fatal().Msg(err.Error())
+	}
+}
+
+func startServer() error {
 	log.Info().Msg("Starting server")
 
-	rand.Seed(int64(time.Now().Nanosecond()))
+	config, err := conf.New()
+	if err != nil {
+		return err
+	}
 
-	config := conf.New()
 	logLevel, err := zerolog.ParseLevel(config.LogLevel)
 	if err != nil {
-		log.Fatal().Err(err)
+		return err
 	}
 	zerolog.SetGlobalLevel(logLevel)
+
 	store := store.New(config.Store)
 	err = store.Init()
 	if err != nil {
-		log.Fatal().Err(err)
+		return err
 	}
 
 	server := &httpserver.HTTPServer{Store: store}
 	server.Init()
 	err = server.Run(":" + strconv.Itoa(config.ListenPort))
-	if err != nil {
-		log.Fatal().Err(err)
-	}
+	return err
 }

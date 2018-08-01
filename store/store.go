@@ -42,7 +42,7 @@ func (s *Store) Init() error {
 }
 
 func (s *Store) StoreSecret(secret string, expiration time.Duration) (string, error) {
-	key := helpers.Rand(s.config.KeyLength)
+	key := helpers.GenerateRandomString(s.config.KeyLength)
 	_, err := s.redisClient.Set(secretPath(key), secret, expiration).Result()
 	log.Info().Msgf("Stored new secret at %s", key)
 	return key, err

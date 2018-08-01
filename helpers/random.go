@@ -6,7 +6,7 @@ import (
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-func Rand(n int) string {
+func GenerateRandomString(n int) string {
 	if n <= 0 {
 		panic("Rand(): i must be > 0")
 	}
