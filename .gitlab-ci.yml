@@ -23,7 +23,7 @@ test:
   services:
     - bitnami/redis:4.0
   variables:
-    ALLOW_EMPTY_PASSWORD: yes
+    ALLOW_EMPTY_PASSWORD: 'yes'
     OTS_STORE_ADDR: redis:6379
   script:
     - fixGoPath
