@@ -7,4 +7,4 @@ services:
     ports:
       - "6379:6379"
     environment:
-      - REDIS_PASSWORD=password123
+      - ALLOW_EMPTY_PASSWORD=yes

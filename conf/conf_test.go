@@ -17,7 +17,7 @@ func Test_ConfNew_Defaults(t *testing.T) {
 	assert.Equal(0, config.Store.Database)
 	assert.Equal(false, config.Store.Flush)
 	assert.Equal(8, config.Store.KeyLength)
-	assert.Equal("password123", config.Store.Password)
+	assert.Equal("", config.Store.Password)
 }
 
 func Test_ConfNew_WithOverrides(t *testing.T) {
