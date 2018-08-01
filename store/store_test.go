@@ -29,7 +29,9 @@ func Test_StoreInit_InvalidAddr(t *testing.T) {
 	store := New(config.Store)
 
 	err := store.Init()
-	assert.EqualError(err, "dial tcp 127.0.0.1:9999: getsockopt: connection refused")
+	// the error is either getsockopt or connect...
+	assert.Contains(err.Error(), "dial tcp 127.0.0.1:9999: ")
+	assert.Contains(err.Error(), ": connection refused")
 }
 
 func Test_StoreStoreSecret_OK(t *testing.T) {
