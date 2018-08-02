@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-redis/redis"
 	"github.com/stretchr/testify/require"
 	"gitlab.dreau.fr/home/onetimesecret/conf"
 	"gitlab.dreau.fr/home/onetimesecret/helpers/tests"
@@ -57,7 +56,7 @@ func Test_Store_Expiration(t *testing.T) {
 	time.Sleep(30 * time.Millisecond)
 
 	secret, err = store.GetSecret(expectedKey)
-	assert.Equal(redis.Nil, err)
+	assert.EqualError(err, "missing secret")
 	assert.Empty(secret)
 }
 
@@ -73,7 +72,7 @@ func Test_StoreGetSecret_Missing(t *testing.T) {
 	assert, store := SetupValidStore(t)
 
 	secret, err := store.GetSecret("non-existing key")
-	assert.Equal(redis.Nil, err)
+	assert.EqualError(err, "missing secret")
 	assert.Empty(secret)
 }
 
