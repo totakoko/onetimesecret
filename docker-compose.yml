@@ -1,10 +1,7 @@
 version: '3.3'
 services:
   redis:
-    # image: redis:4.0-alpine
-    image: bitnami/redis:4.0 # Using the bitnami image, we can set the admin password
+    image: redis:4.0-alpine
     restart: unless-stopped
     ports:
       - "6379:6379"
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
