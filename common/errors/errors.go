@@ -25,6 +25,13 @@ func InvalidParameter(message string) error {
 	}
 }
 
+func MissingResource(message string) error {
+	return &AppError{
+		Message:  message,
+		HTTPCode: 404,
+	}
+}
+
 func ServerError(message string) error {
 	return &AppError{
 		Message:  message,

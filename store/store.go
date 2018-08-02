@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/rs/zerolog/log"
+	"gitlab.dreau.fr/home/onetimesecret/common/errors"
 	"gitlab.dreau.fr/home/onetimesecret/conf"
 	"gitlab.dreau.fr/home/onetimesecret/helpers"
 )
@@ -44,14 +45,17 @@ func (s *Store) Init() error {
 func (s *Store) StoreSecret(secret string, expiration time.Duration) (string, error) {
 	key := helpers.GenerateRandomString(s.config.KeyLength)
 	_, err := s.redisClient.Set(secretPath(key), secret, expiration).Result()
-	log.Info().Msgf("Stored new secret at %s", key)
+	log.Info().Msgf("Stored new secret at %s (exp %s)", key, expiration.String())
 	return key, err
 }
 
 // pas de conversion en objet, car il est de toute façon reserialisé pour être renvoyé au client
 func (s *Store) GetSecret(key string) (string, error) {
 	secretStr, err := s.redisClient.Get(secretPath(key)).Result()
-	log.Info().Msgf("Reading secret %s", key)
+	log.Info().Msgf("Reading secret at %s", key)
+	if err == redis.Nil {
+		return "", errors.MissingResource("missing secret")
+	}
 	return secretStr, err
 }
 

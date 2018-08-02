@@ -19,7 +19,7 @@ func (s *HTTPServer) SecretPost(c *gin.Context) {
 }
 
 func (s *HTTPServer) SecretGet(c *gin.Context) {
-	secret, err := s.Store.GetSecret(c.Param("secretId"))
+	secret, err := s.Store.GetSecret(c.Param("id"))
 	if err != nil {
 		sendErrorResponse(c, err)
 		return
