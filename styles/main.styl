@@ -1,0 +1,178 @@
+//
+// variables
+//
+
+$pageWidth = 720px
+$navBackgroundColor = #3e608e
+$elementsPadding = 0.5em
+
+
+//
+// small reset
+//
+
+*
+  box-sizing border-box
+  padding 0
+  margin 0
+  outline 0
+
+button
+  color inherit
+
+input
+textarea
+select
+button
+  font-size inherit
+  font-family inherit
+
+
+//
+// basic html elements
+//
+
+html
+body
+  // make flexbox use all vertical space
+  height 100%
+
+.ots
+  &-select
+    padding $elementsPadding
+    background-color lighten($navBackgroundColor, 95%)
+    cursor pointer
+
+    &:hover
+    &:focus
+      background-color darken(@background-color, 5%)
+
+  &-a
+    color inherit
+    text-decoration none
+    padding 4px
+    border-radius 4px
+
+    &:hover
+    &:focus
+      background-color rgba(209,209,240,0.2)
+
+  &-textarea
+    padding $elementsPadding
+    border-radius 4px
+    background-color lighten($navBackgroundColor, 95%)
+    border 2px solid darken(@background-color, 20%)
+
+    &:hover
+    &:focus
+      background-color darken(@background-color, 5%)
+
+
+//
+// general layout
+//
+
+.ots
+  display flex
+  flex-direction column
+  justify-content stretch
+  // looted from GitLab to have nice fonts (https://gitlab.com/gitlab-org/gitlab-ce/blob/3cd61fea03b360af50793488a83e8147a1cf3311/app/assets/stylesheets/framework/variables.scss#L376-377)
+  font-family -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
+
+  &-header
+    background-color $navBackgroundColor
+
+  &-nav
+    max-width $pageWidth
+    margin 0 auto
+    display flex
+    justify-content space-between
+    align-items stretch
+    color #eeeeee
+
+    &__brand
+      font-size 2em
+
+    &__about
+      border none
+      width 2em
+      background none
+      text-align center
+      font-size 1.8em
+
+  &-content
+    flex 1
+    margin 0 auto
+    margin-top 1em
+    width 100%
+    max-width $pageWidth
+    display flex
+    flex-direction column
+
+
+//
+// create-secret
+//
+
+.create-secret
+  flex 1
+  display flex
+  flex-direction column
+
+  &__textarea
+    flex 1
+    min-height 80px
+    max-height 400px
+
+  &__parameters
+    padding-top 1em
+    padding-bottom 1em
+    font-size 1.4em
+
+  &__field
+    display inline-block
+    margin-right 1em
+
+  &__submit
+    padding $elementsPadding
+    font-size 2em
+    border 0
+    border-radius 4px
+    background-color lighten($navBackgroundColor, 30%)
+    cursor pointer
+
+    &:hover
+    &:focus
+      background-color darken(@background-color, 20%)
+    &:active
+      background-color darken(@background-color, 40%)
+
+
+//
+// view-secret-link
+//
+
+.view-secret-link
+  display flex
+  flex-direction column
+
+  &__title
+    margin-bottom 1em
+    text-align center
+    font-size 1.4em
+
+  &__link
+    padding $elementsPadding
+    text-align center
+    font-size 1.2em
+
+
+.view-secret
+  &__title
+    text-align center
+    font-size 1.4em
+    margin-bottom 1em
+
+  &__secret
+    flex 1
+    max-height 70vh

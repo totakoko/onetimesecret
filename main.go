@@ -37,7 +37,10 @@ func startServer() error {
 		return err
 	}
 
-	server := &httpserver.HTTPServer{Store: store}
+	server := &httpserver.HTTPServer{
+		PublicURL: config.PublicURL,
+		Store:     store,
+	}
 	server.Init()
 	err = server.Run(":" + strconv.Itoa(config.ListenPort))
 	return err

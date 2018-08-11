@@ -36,6 +36,7 @@ func (s *Store) Init() error {
 		return err
 	}
 	if s.config.Flush {
+		log.Warn().Msg("Flushing database")
 		err = s.redisClient.FlushDB().Err()
 		return err
 	}
@@ -51,12 +52,22 @@ func (s *Store) StoreSecret(secret string, expiration time.Duration) (string, er
 
 // pas de conversion en objet, car il est de toute façon reserialisé pour être renvoyé au client
 func (s *Store) GetSecret(key string) (string, error) {
-	secretStr, err := s.redisClient.Get(secretPath(key)).Result()
-	log.Info().Msgf("Reading secret at %s", key)
-	if err == redis.Nil {
+	secretFullKey := secretPath(key)
+
+	pipeline := s.redisClient.TxPipeline()
+	get := pipeline.Get(secretFullKey)
+	pipeline.Del(secretFullKey)
+
+	_, err := pipeline.Exec()
+	switch err {
+	case redis.Nil:
 		return "", errors.MissingResource("missing secret")
+	case nil:
+		log.Info().Msgf("Reading secret at %s", key)
+		return get.Val(), nil
+	default:
+		return "", err
 	}
-	return secretStr, err
 }
 
 func secretPath(key string) string {

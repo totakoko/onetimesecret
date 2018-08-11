@@ -2,9 +2,15 @@ package helpers
 
 import (
 	"math/rand"
+	"time"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func init() {
+	// initialize the random generator
+	rand.Seed(time.Now().UTC().UnixNano())
+}
 
 func GenerateRandomString(n int) string {
 	if n <= 0 {

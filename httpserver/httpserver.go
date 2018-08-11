@@ -11,7 +11,8 @@ import (
 )
 
 type HTTPServer struct {
-	Store common.Store
+	PublicURL string
+	Store     common.Store
 
 	router *gin.Engine
 }
@@ -38,11 +39,17 @@ func (s *HTTPServer) Init() {
 		})
 	})
 
-	s.router.POST("/secrets", s.SecretPost)
-	s.router.GET("/secrets/:id", s.SecretGet)
+	s.router.Static("/assets", ".build/assets")
+
+	s.router.GET("/", s.DisplayHomePage)
+	s.router.GET("/about", s.DisplayAboutPage)
+	s.router.POST("/secrets", s.CreateSecret)
+	s.router.GET("/secrets/:id", s.GetSecret)
+	s.router.POST("/api/secrets", s.APICreateSecret)
+	s.router.GET("/api/secrets/:id", s.APIGetSecret)
 }
 
 func (s *HTTPServer) Run(addr string) error {
-	log.Error().Msgf("Listening on %s", addr)
+	log.Warn().Msgf("Listening on %s", addr)
 	return s.router.Run(addr)
 }

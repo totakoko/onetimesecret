@@ -9,6 +9,7 @@ import (
 type Configuration struct {
 	ListenPort int    `default:"5000"`
 	LogLevel   string `default:"info"`
+	PublicURL  string `default:"http://localhost:5000/"`
 	Store      StoreConfig
 }
 
