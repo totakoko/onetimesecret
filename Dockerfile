@@ -1,4 +1,4 @@
-FROM node:10.8-alpine AS builder-node
+FROM node:10.8-stretch AS builder-node
 
 WORKDIR /src
 
