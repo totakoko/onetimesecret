@@ -3,11 +3,14 @@ const gulp = require('gulp')
 const stylus = require('gulp-stylus')
 const pug = require('gulp-pug')
 const errorHandler = require('gulp-error-handle')
+const minifyCssNames = require('gulp-minify-css-names')
+const csso = require('gulp-csso')
 
 gulp.task('css', function () {
   return gulp.src('styles/*.styl')
     .pipe(errorHandler())
     .pipe(stylus())
+    .pipe(csso())
     .pipe(gulp.dest('.build/assets'))
 })
 
@@ -62,7 +65,14 @@ gulp.task('go-server', function () {
   server = startServer()
 })
 
-gulp.task('build', ['css', 'html'])
+gulp.task('build', ['css', 'html'], function() {
+  return gulp.src(['.build/assets/*.css', '.build/templates/*.html'], {base: '.build/'})
+      .pipe(minifyCssNames({
+        postfix: '',
+        prefix: 'ots-'
+      }))
+      .pipe(gulp.dest('.build/'))
+})
 
 gulp.task('default', ['css', 'html'], function () {
   gulp.watch('styles/**/*.styl', ['css'])
