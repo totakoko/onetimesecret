@@ -1,6 +1,7 @@
 package store
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -44,6 +45,9 @@ func (s *Store) Init() error {
 }
 
 func (s *Store) StoreSecret(secret string, expiration time.Duration) (string, error) {
+	if len(secret) > s.config.MaxSecretSize {
+		return "", errors.InvalidParameter("secret is too long (limit is set at " + strconv.Itoa(s.config.MaxSecretSize) + " bytes)")
+	}
 	key := helpers.GenerateRandomString(s.config.KeyLength)
 	_, err := s.redisClient.Set(secretPath(key), secret, expiration).Result()
 	log.Info().Msgf("Stored new secret at %s (exp %s)", key, expiration.String())

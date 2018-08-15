@@ -25,7 +25,7 @@ func (s *HTTPServer) CreateSecret(c *gin.Context) {
 	}
 	secretKey, err := s.Store.StoreSecret(c.PostForm("secret"), time.Duration(expiration)*time.Second)
 	if err != nil {
-		sendErrorResponse(c, err)
+		s.sendErrorPage(c, err)
 		return
 	}
 	c.Status(http.StatusCreated)

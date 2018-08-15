@@ -7,23 +7,28 @@ import (
 )
 
 func sendErrorResponse(c *gin.Context, err error) {
-	log.Error().Err(err)
+	log.Error().Fields(map[string]interface{}{
+		"error": err.Error(),
+	}).Msg("Service error")
 	c.JSON(getStatusFromError(err), gin.H{
 		"message": err.Error(),
+	})
+}
+func (s *HTTPServer) sendErrorPage(c *gin.Context, err error) {
+	log.Error().Fields(map[string]interface{}{
+		"error": err.Error(),
+	}).Msg("Service error")
+	c.Status(getStatusFromError(err))
+	s.templatesCache["error"].Execute(c.Writer, map[string]interface{}{
+		"error": err.Error(),
 	})
 }
 
 func getStatusFromError(err error) int {
 	switch err.(type) {
 	case *errors.AppError:
-		log.Error().Fields(map[string]interface{}{
-			"error": err.Error(),
-		}).Msg("Service error")
 		return err.(*errors.AppError).HTTPCode
 	default:
-		log.Error().Fields(map[string]interface{}{
-			"error": err.Error(),
-		}).Msg("Unknown service error")
 		return 500
 	}
 }

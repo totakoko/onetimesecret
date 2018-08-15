@@ -13,11 +13,12 @@ type Configuration struct {
 }
 
 type StoreConfig struct {
-	Addr      string `default:"127.0.0.1:6379"`
-	Password  string `default:""`
-	Database  int    `default:"0"`
-	Flush     bool   `default:"false"`
-	KeyLength int    `default:"8"`
+	Addr          string `default:"127.0.0.1:6379"`
+	Password      string `default:""`
+	Database      int    `default:"0"`
+	Flush         bool   `default:"false"`
+	KeyLength     int    `default:"8"`
+	MaxSecretSize int    `default:"10485760"` // 10Mo
 }
 
 func New() (Configuration, error) {
