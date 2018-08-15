@@ -6,8 +6,7 @@ COPY package.json yarn.lock ./
 RUN yarn
 
 COPY gulpfile.js .
-COPY templates ./templates/
-COPY styles ./styles/
+COPY frontend ./frontend/
 RUN yarn run gulp build
 
 
