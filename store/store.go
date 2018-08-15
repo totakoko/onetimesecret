@@ -48,6 +48,9 @@ func (s *Store) StoreSecret(secret string, expiration time.Duration) (string, er
 	if len(secret) > s.config.MaxSecretSize {
 		return "", errors.InvalidParameter("secret is too long (limit is set at " + strconv.Itoa(s.config.MaxSecretSize) + " bytes)")
 	}
+	if expiration > s.config.MaxSecretExpiration {
+		return "", errors.InvalidParameter("expiration is too high (limit is set at " + s.config.MaxSecretExpiration.String() + ")")
+	}
 	key := helpers.GenerateRandomString(s.config.KeyLength)
 	_, err := s.redisClient.Set(secretPath(key), secret, expiration).Result()
 	log.Info().Msgf("Stored new secret at %s (exp %s)", key, expiration.String())

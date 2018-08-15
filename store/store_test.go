@@ -79,6 +79,26 @@ func Test_Store_ErrMaxSize(t *testing.T) {
 	assert.Empty(key)
 }
 
+func Test_Store_ErrMaxExpiration(t *testing.T) {
+	assert := tests.SetupTest(t)
+	config, err := conf.New()
+	assert.NoError(err)
+	config.Store.Flush = true
+	config.Store.MaxSecretExpiration = 60 * time.Second
+
+	store := New(config.Store)
+	err = store.Init()
+	assert.NoError(err)
+
+	key, err := store.StoreSecret("secret", 30*time.Second)
+	assert.NoError(err)
+	assert.Equal("ONRhfKsU", key)
+
+	key, err = store.StoreSecret("secret", 61*time.Second)
+	assert.Contains(err.Error(), "expiration is too high")
+	assert.Empty(key)
+}
+
 func Test_StoreGetSecret_OK(t *testing.T) {
 	assert, store := SetupValidStore(t)
 
