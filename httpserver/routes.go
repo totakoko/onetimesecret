@@ -35,6 +35,12 @@ func (s *HTTPServer) CreateSecret(c *gin.Context) {
 }
 
 func (s *HTTPServer) GetSecret(c *gin.Context) {
+	c.Status(http.StatusOK)
+	s.templatesCache["get-secret"].Execute(c.Writer, map[string]interface{}{
+		"secretViewURL": "/secrets/" + c.Param("id") + "/view",
+	})
+}
+func (s *HTTPServer) GetSecretContent(c *gin.Context) {
 	secret, err := s.Store.GetSecret(c.Param("id"))
 	switch err.(type) {
 	case nil:

@@ -56,10 +56,14 @@ func (s *HTTPServer) Init() error {
 
 	s.router.GET("/test/secret", s.TestSecret)
 	s.router.GET("/test/link", s.TestCreateSecret)
+	s.router.GET("/test/get", s.TestGetSecret)
+
 	s.router.GET("/", s.DisplayHomePage)
 	s.router.GET("/about", s.DisplayAboutPage)
 	s.router.POST("/secrets", s.CreateSecret)
 	s.router.GET("/secrets/:id", s.GetSecret)
+	s.router.GET("/secrets/:id/view", s.GetSecretContent)
+
 	s.router.POST("/api/secrets", s.APICreateSecret)
 	s.router.GET("/api/secrets/:id", s.APIGetSecret)
 	return nil
@@ -81,5 +85,11 @@ func (s *HTTPServer) TestCreateSecret(c *gin.Context) {
 	c.Status(http.StatusOK)
 	s.templatesCache["view-secret-link"].Execute(c.Writer, map[string]interface{}{
 		"secretURL": "http://localhost:5000/test/secret",
+	})
+}
+func (s *HTTPServer) TestGetSecret(c *gin.Context) {
+	c.Status(http.StatusOK)
+	s.templatesCache["get-secret"].Execute(c.Writer, map[string]interface{}{
+		"secretViewURL": "/secrets/123/view",
 	})
 }
