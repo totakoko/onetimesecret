@@ -63,7 +63,7 @@ gulp.task('go-server', function () {
   })
 })
 
-gulp.task('build', ['css', 'html'], function() {
+gulp.task('build', ['css', 'html', 'assets'], function() {
   return gulp.src([
     path.join(buildPublicDir, '*.css'),
     path.join(buildTemplatesDir, '*.html')
