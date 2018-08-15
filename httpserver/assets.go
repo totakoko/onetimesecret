@@ -1,11 +1,11 @@
 package httpserver
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"mime"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -14,16 +14,13 @@ import (
 )
 
 func (s *HTTPServer) loadStaticAssets() error {
-	assetPaths, err := filepath.Glob(publicPath + "/**")
-	if err != nil {
-		return err
-	}
-	if len(assetPaths) == 0 {
-		return errors.New("no assets were loaded")
-	}
-
-	for _, assetPath := range assetPaths {
-		log.Debug().Msgf("Reading asset %s", assetPath)
+	return filepath.Walk(publicPath, func(assetPath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
 		assetURL := strings.TrimPrefix(assetPath, publicPath)
 
 		assetContent, err := ioutil.ReadFile(assetPath)
@@ -35,9 +32,8 @@ func (s *HTTPServer) loadStaticAssets() error {
 		s.router.HEAD(assetURL, s.serveAsset)
 		s.router.GET(assetURL, s.serveAsset)
 		log.Debug().Msgf("Loaded asset %s from %s", assetURL, assetPath)
-	}
-	log.Debug().Msgf("Loaded %d assets", len(assetPaths))
-	return nil
+		return nil
+	})
 }
 
 func (s *HTTPServer) serveAsset(c *gin.Context) {

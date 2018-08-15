@@ -1,7 +1,8 @@
 # One Time Secret
 
-Clone of the very usefule [One Time Secret]() but without
+Clone of the very useful [One-Time Secret](https://onetimesecret.com) but with a simpler design.
 
+This project is mainly used to experiment best development practices, automated tests, continuous deployment...
 
 
 ## Prerequisites
@@ -54,4 +55,22 @@ Recompile CSS when a change is made to the stylus:
         -v $PWD/public:/inputfiles \
         -v $PWD/public:/outputfiles \
         gruen/stylus /inputfiles/assets/main.styl -o /outputfiles/assets/main.css
+    ```
+
+## Project Structure
+
+- public: contains all assets that map to
+- templates: contains the *pug* pages that are rendered in the browser
+- styles: contains the *stylus* files for styling the pages
+- store: contains the business and database layer responsible of persisting and retrieving the data from redis
+
+
+## Logo icons
+
+- Edit the vector images in *frontend/src* with Inkscape.
+- Then use the following commands to export the images to png.
+
+    ```
+    inkscape -z -e frontend/public/images/icon-512.png -w 512 -h 512 frontend/src/logo-icon.svg
+    inkscape -z -e frontend/public/images/icon-192.png -w 192 -h 192 frontend/src/logo-icon.svg
     ```

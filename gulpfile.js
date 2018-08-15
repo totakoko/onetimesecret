@@ -55,7 +55,7 @@ gulp.task('go-server', function () {
 
   gulp.watch([
     '**/*.go',
-    buildDir,
+    path.join(buildDir, '**/*'),
   ], function () {
     console.log('Restarting go server...')
     kill(serverProcess.pid, 'SIGTERM')
@@ -77,7 +77,7 @@ gulp.task('build', ['css', 'html'], function() {
 
 gulp.task('default', ['css', 'html', 'assets', 'go-server'], function () {
   gulp.watch(path.join(stylesDir, '**/*.styl'), ['css'])
-  gulp.watch(path.join(templatesDir, '*.pug'), ['html'])
+  gulp.watch(path.join(templatesDir, '**/*.pug'), ['html'])
   gulp.watch(path.join(publicDir, '**/*'), ['assets'])
 })
 
