@@ -1,3 +1,4 @@
+const path = require('path')
 const execFile = require('child_process').execFile
 const gulp = require('gulp')
 const stylus = require('gulp-stylus')
@@ -5,68 +6,68 @@ const pug = require('gulp-pug')
 const errorHandler = require('gulp-error-handle')
 const minifyCssNames = require('gulp-minify-css-names')
 const csso = require('gulp-csso')
+const kill = require('tree-kill')
+
+process.on('uncaughtException', (err) => {
+  console.log('Exception:', err)
+  process.exit(2)
+})
+
+// changes to these paths must be correlated with changes in httpserver/httpserver.go
+const buildDir = '.build'
+const buildPublicDir = path.join(buildDir, 'public')
+const buildTemplatesDir = path.join(buildDir, 'templates')
+
+const frontendDir = 'frontend'
+const publicDir = path.join(frontendDir, 'public')
+const templatesDir = path.join(frontendDir, 'templates')
+const stylesDir = path.join(frontendDir, 'styles')
+
+function startServer () {
+  const serverProcess = execFile('go', ['run', 'main.go'])
+  serverProcess.stdout.pipe(process.stdout)
+  serverProcess.stderr.pipe(process.stderr)
+  return serverProcess
+}
+
+gulp.task('assets', function () {
+  return gulp.src(path.join(publicDir, '**/*'))
+    .pipe(gulp.dest(buildPublicDir))
+})
 
 gulp.task('css', function () {
-  return gulp.src('styles/*.styl')
+  return gulp.src(path.join(stylesDir, '*.styl'))
     .pipe(errorHandler())
     .pipe(stylus())
     .pipe(csso())
-    .pipe(gulp.dest('.build/assets'))
+    .pipe(gulp.dest(buildPublicDir))
 })
 
 gulp.task('html', function () {
-  return gulp.src('templates/*.pug')
+  return gulp.src(path.join(templatesDir, '*.pug'))
     .pipe(errorHandler())
     .pipe(pug())
-    .pipe(gulp.dest('.build/templates'))
+    .pipe(gulp.dest(buildTemplatesDir))
 })
 
 gulp.task('go-server', function () {
-  var server
-  setTimeout(function () {
-    console.log('killing server')
-    server.kill('SIGTERM')
-  }, 4000)
-  function startServer () {
-    var goProcess = execFile('go', ['run', 'main.go'])
-    goProcess.stdout.on('data', function (data) {
-      console.log('stdout: ' + data)
-    })
-    goProcess.stderr.on('data', function (data) {
-      // console.log('stderr: ' + data)
-      console.log(data)
-    })
-    goProcess.on('close', function (code) {
-      console.log('closing code: ' + code)
-    })
-    goProcess.on('error', function (err) {
-      console.log('error: ' + err)
-    })
+  var serverProcess = startServer()
 
-    function onExit() {
-      goProcess.kill('SIGINT')
-      process.exit(0)
-    }
-    process.on('SIGINT', onExit)
-    process.on('exit', onExit)
-
-    return goProcess
-  }
-
-  gulp.watch('**/*.go', function () {
-    console.log('killing process')
-    server.kill('SIGINT') // ici le kill ne fonctionne pas vraiment, et le process se trouvé sous init...
-    setTimeout(function () {
-      console.log('creating new process')
-      server = startServer()
-      console.log('created new process')
-    }, 2000)
+  gulp.watch([
+    '**/*.go',
+    buildDir,
+  ], function () {
+    console.log('Restarting go server...')
+    kill(serverProcess.pid, 'SIGTERM')
+    serverProcess = startServer()
   })
-  server = startServer()
 })
 
 gulp.task('build', ['css', 'html'], function() {
-  return gulp.src(['.build/assets/*.css', '.build/templates/*.html'], {base: '.build/'})
+  return gulp.src([
+    path.join(buildPublicDir, '*.css'),
+    path.join(buildTemplatesDir, '*.html')
+  ], {base: '.build/'})
       .pipe(minifyCssNames({
         postfix: '',
         prefix: 'ots-'
@@ -74,8 +75,9 @@ gulp.task('build', ['css', 'html'], function() {
       .pipe(gulp.dest('.build/'))
 })
 
-gulp.task('default', ['css', 'html'], function () {
-  gulp.watch('styles/**/*.styl', ['css'])
-  gulp.watch('templates/**/*.pug', ['html'])
+gulp.task('default', ['css', 'html', 'assets', 'go-server'], function () {
+  gulp.watch(path.join(stylesDir, '**/*.styl'), ['css'])
+  gulp.watch(path.join(templatesDir, '*.pug'), ['html'])
+  gulp.watch(path.join(publicDir, '**/*'), ['assets'])
 })
 

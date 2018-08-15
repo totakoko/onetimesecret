@@ -10,11 +10,11 @@ import (
 )
 
 func (s *HTTPServer) DisplayHomePage(c *gin.Context) {
-	templatesCache["create-secret"].Execute(c.Writer, nil)
+	s.templatesCache["create-secret"].Execute(c.Writer, nil)
 }
 
 func (s *HTTPServer) DisplayAboutPage(c *gin.Context) {
-	templatesCache["about"].Execute(c.Writer, nil)
+	s.templatesCache["about"].Execute(c.Writer, nil)
 }
 
 func (s *HTTPServer) CreateSecret(c *gin.Context) {
@@ -29,7 +29,7 @@ func (s *HTTPServer) CreateSecret(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusCreated)
-	templatesCache["view-secret-link"].Execute(c.Writer, map[string]interface{}{
+	s.templatesCache["view-secret-link"].Execute(c.Writer, map[string]interface{}{
 		"secretURL": s.PublicURL + "secrets/" + secretKey,
 	})
 }
@@ -39,12 +39,12 @@ func (s *HTTPServer) GetSecret(c *gin.Context) {
 	switch err.(type) {
 	case nil:
 		c.Status(http.StatusOK)
-		templatesCache["view-secret"].Execute(c.Writer, map[string]interface{}{
+		s.templatesCache["view-secret"].Execute(c.Writer, map[string]interface{}{
 			"secret": secret,
 		})
 	case *errors.AppError:
 		c.Status(http.StatusNotFound)
-		templatesCache["view-secret"].Execute(c.Writer, map[string]interface{}{
+		s.templatesCache["view-secret"].Execute(c.Writer, map[string]interface{}{
 			"secret": "Unknown secret",
 		})
 	default:

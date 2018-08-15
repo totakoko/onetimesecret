@@ -7,6 +7,7 @@
     "test": "tests"
   },
   "scripts": {
+    "start": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +23,7 @@
     "gulp-error-handle": "^1.0.1",
     "gulp-minify-css-names": "^1.4.3",
     "gulp-pug": "^4.0.1",
-    "gulp-stylus": "^2.7.0"
+    "gulp-stylus": "^2.7.0",
+    "tree-kill": "^1.2.0"
   }
 }

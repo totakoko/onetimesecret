@@ -3,7 +3,6 @@ package conf
 import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 type Configuration struct {
@@ -28,6 +27,5 @@ func New() (Configuration, error) {
 	if err != nil {
 		return Configuration{}, err
 	}
-	log.Debug().Msgf("Conf %+v", conf)
 	return conf, err
 }

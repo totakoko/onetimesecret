@@ -32,8 +32,7 @@ func startServer() error {
 	zerolog.SetGlobalLevel(logLevel)
 
 	store := store.New(config.Store)
-	err = store.Init()
-	if err != nil {
+	if err := store.Init(); err != nil {
 		return err
 	}
 
@@ -41,7 +40,8 @@ func startServer() error {
 		PublicURL: config.PublicURL,
 		Store:     store,
 	}
-	server.Init()
-	err = server.Run(":" + strconv.Itoa(config.ListenPort))
-	return err
+	if err := server.Init(); err != nil {
+		return err
+	}
+	return server.Run(":" + strconv.Itoa(config.ListenPort))
 }

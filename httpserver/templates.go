@@ -1,6 +1,8 @@
 package httpserver
 
 import (
+	"errors"
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"path"
@@ -9,15 +11,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var (
-	templatesCache = map[string]*template.Template{}
-)
-
-// list and parse the files in the templates directory
-func init() {
-	templatePaths, err := filepath.Glob(".build/templates/*.html")
+func (s *HTTPServer) loadTemplates() error {
+	templatePaths, err := filepath.Glob(templatesPath + "/*.html")
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		return err
+	}
+	if len(templatePaths) == 0 {
+		return errors.New("no templates were loaded")
 	}
 
 	for _, templatePath := range templatePaths {
@@ -26,20 +26,17 @@ func init() {
 
 		templateContent, err := ioutil.ReadFile(templatePath)
 		if err != nil {
-			log.Fatal().Msgf("could not parse template %s: %v", templateName, err)
+			return fmt.Errorf("could not read template %s: %v", templateName, err)
 		}
 
 		htmlTemplate, err := template.New("").Parse(string(templateContent))
 		if err != nil {
-			log.Fatal().Msgf("could not parse template %s: %v", templateName, err)
+			return fmt.Errorf("could not parse template %s: %v", templateName, err)
 		}
 
 		log.Debug().Msgf("Loaded template %s from %s", templateName, templatePath)
-		templatesCache[templateName] = htmlTemplate
-	}
-
-	if len(templatePaths) == 0 {
-		log.Fatal().Msg("No templates were loaded!")
+		s.templatesCache[templateName] = htmlTemplate
 	}
 	log.Debug().Msgf("Loaded %d templates", len(templatePaths))
+	return nil
 }
