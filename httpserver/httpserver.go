@@ -1,7 +1,6 @@
 package httpserver
 
 import (
-	"errors"
 	"html/template"
 	"net/http"
 	"time"
@@ -42,7 +41,13 @@ func (s *HTTPServer) Init() error {
 	}))
 
 	s.router.NoRoute(func(c *gin.Context) {
-		s.sendErrorPage(c, errors.New("Page not found"))
+		log.Error().Fields(map[string]interface{}{
+			"url": c.Request.URL.Path,
+		}).Msg("404 error")
+		c.Status(http.StatusNotFound)
+		s.templatesCache["error"].Execute(c.Writer, map[string]interface{}{
+			"error": "Page not found... ¯\\_(ツ)_/¯",
+		})
 	})
 
 	if err := s.loadTemplates(); err != nil {
