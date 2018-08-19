@@ -73,4 +73,5 @@ Recompile CSS when a change is made to the stylus:
     ```
     inkscape -z -e frontend/public/images/icon-512.png -w 512 -h 512 frontend/src/logo-icon.svg
     inkscape -z -e frontend/public/images/icon-192.png -w 192 -h 192 frontend/src/logo-icon.svg
+    inkscape -z -e frontend/public/images/icon-32.png -w 32 -h 32 frontend/src/logo-icon.svg
     ```
