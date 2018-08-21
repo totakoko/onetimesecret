@@ -55,7 +55,7 @@ gulp.task('go-server', function () {
 
   gulp.watch([
     '**/*.go',
-    path.join(buildDir, '**/*'),
+    path.join(buildDir, '**/*')
   ], function () {
     console.log('Restarting go server...')
     kill(serverProcess.pid, 'SIGTERM')
@@ -63,16 +63,16 @@ gulp.task('go-server', function () {
   })
 })
 
-gulp.task('build', ['css', 'html', 'assets'], function() {
+gulp.task('build', ['css', 'html', 'assets'], function () {
   return gulp.src([
     path.join(buildPublicDir, '*.css'),
     path.join(buildTemplatesDir, '*.html')
   ], {base: '.build/'})
-      .pipe(minifyCssNames({
-        postfix: '',
-        prefix: 'ots-'
-      }))
-      .pipe(gulp.dest('.build/'))
+    .pipe(minifyCssNames({
+      postfix: '',
+      prefix: 'ots-'
+    }))
+    .pipe(gulp.dest('.build/'))
 })
 
 gulp.task('default', ['css', 'html', 'assets', 'go-server'], function () {
@@ -80,4 +80,3 @@ gulp.task('default', ['css', 'html', 'assets', 'go-server'], function () {
   gulp.watch(path.join(templatesDir, '**/*.pug'), ['html'])
   gulp.watch(path.join(publicDir, '**/*'), ['assets'])
 })
-

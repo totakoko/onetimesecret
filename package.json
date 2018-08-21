@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "gulp",
+    "lint": "standard",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +25,7 @@
     "gulp-minify-css-names": "^1.4.3",
     "gulp-pug": "^4.0.1",
     "gulp-stylus": "^2.7.0",
+    "standard": "^11.0.1",
     "tree-kill": "^1.2.0"
   }
 }

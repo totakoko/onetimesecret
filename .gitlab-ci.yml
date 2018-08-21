@@ -11,12 +11,19 @@ stages:
   - build-docker
   - deploy
 
-lint:
+lint-go:
   stage: test
   script:
     - fixGoPath
     - go fmt ./...
     - go vet ./...
+
+lint-node:
+  stage: test
+  image: node:10
+  script:
+    - yarn install
+    - yarn run lint
 
 test:
   stage: test

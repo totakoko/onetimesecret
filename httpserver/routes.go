@@ -12,6 +12,9 @@ import (
 func (s *HTTPServer) DisplayHomePage(c *gin.Context) {
 	s.templatesCache["create-secret"].Execute(c.Writer, nil)
 }
+func (s *HTTPServer) DisplayOfflinePage(c *gin.Context) {
+	s.templatesCache["_offline"].Execute(c.Writer, nil)
+}
 
 func (s *HTTPServer) DisplayAboutPage(c *gin.Context) {
 	s.templatesCache["about"].Execute(c.Writer, nil)

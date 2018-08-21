@@ -62,6 +62,7 @@ func (s *HTTPServer) Init() error {
 	s.router.GET("/test/get", s.TestGetSecret)
 
 	s.router.GET("/", s.DisplayHomePage)
+	s.router.GET("/_offline", s.DisplayOfflinePage)
 	s.router.GET("/about", s.DisplayAboutPage)
 	s.router.POST("/secrets", s.CreateSecret)
 	s.router.GET("/secrets/:id", s.GetSecret)
