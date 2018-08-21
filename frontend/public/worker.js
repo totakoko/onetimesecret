@@ -11,7 +11,6 @@ const resourcesToCache = [
 ]
 
 self.addEventListener('install', function (event) {
-  // self.skipWaiting()
   event.waitUntil(
     caches.open(cacheName)
       .then(cache => {
@@ -40,9 +39,9 @@ self.addEventListener('fetch', event => {
       .then(cache => cache.match(strippedURL))
   } else {
     if (isNavigationRequest(req)) {
-      response = networkOrOffline(req.url)
+      response = networkOrOffline(req)
     } else {
-      response = fetch(req.url)
+      response = fetch(req)
     }
   }
   event.respondWith(response)
@@ -52,7 +51,7 @@ function isNavigationRequest (request) {
   return request.method === 'GET' && request.headers.get('accept').includes('text/html')
 }
 
-function networkOrOffline (url) {
-  return fetch(url)
+function networkOrOffline (req) {
+  return fetch(req)
     .catch(() => caches.open(cacheName).then(cache => cache.match('/_offline')))
 }
