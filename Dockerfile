@@ -7,7 +7,7 @@ RUN yarn
 
 COPY gulpfile.js .
 COPY frontend ./frontend/
-RUN yarn run gulp build
+RUN yarn run build
 
 
 FROM golang:1.10-alpine AS builder-go
