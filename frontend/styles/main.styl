@@ -34,6 +34,9 @@ button
 // basic html elements
 //
 
+transition()
+  transition background-color 100ms linear
+
 html
 body
   // make flexbox use all vertical space
@@ -41,6 +44,7 @@ body
 
 .ots
   &-select
+    transition()
     padding $elementsPadding
     background-color lighten($navBackgroundColor, 95%)
     cursor pointer
@@ -50,6 +54,7 @@ body
       background-color darken(@background-color, 5%)
 
   &-a
+    transition()
     color inherit
     text-decoration none
     padding 4px
@@ -60,6 +65,7 @@ body
       background-color rgba(209,209,240,0.2)
 
   &-textarea
+    transition()
     padding $elementsPadding
     border-radius 4px
     background-color lighten($navBackgroundColor, 95%)
@@ -132,6 +138,7 @@ body
     margin-right 1em
 
   &__submit
+    transition()
     padding $elementsPadding
     font-size 2em
     border 0
