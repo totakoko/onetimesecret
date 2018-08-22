@@ -17,32 +17,35 @@ Apart from its usefulness for sharing secrets with other people, this project is
 
 The simplest option is to use the [docker-compose](https://docs.docker.com/compose/) file below to get a service running:
 
-    ```yaml
-    version: '3.3'
-    services:
-      onetimesecret:
-        image: registry.dreau.fr/home/onetimesecret:latest
-        restart: unless-stopped
-        ports:
-          - "8080:5000"
-        environment:
-          OTS_STORE_ADDR: redis:6379
-          OTS_PUBLICURL: http://localhost:8080/
-        networks:
-          - onetimesecret
-      redis:
-        image: redis:4.0-alpine
-        restart: unless-stopped
-        ports:
-          - "6379:6379"
-        networks:
-          - onetimesecret
+- First create a folder named `ots` and copy the content below into a file called `docker-compose.yml`.
 
+```yaml
+version: '3.3'
+services:
+  onetimesecret:
+    image: registry.dreau.fr/home/onetimesecret:latest
+    restart: unless-stopped
+    ports:
+      - "8080:5000"
+    environment:
+      OTS_STORE_ADDR: redis:6379
+      OTS_PUBLICURL: http://localhost:8080/
     networks:
-      onetimesecret:
-    ```
+      - onetimesecret
+  redis:
+    image: redis:4.0-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - onetimesecret
 
-Then you will be able to access OTS at http://localhost:8080/.
+networks:
+  onetimesecret:
+```
+
+- Inside the folder, run `docker-compose up -d`.
+- After a few seconds or minutes, depending of your internet connection, you will be able to access OTS locally at http://localhost:8080/.
 
 
 ## Development
