@@ -1,77 +1,56 @@
 # One Time Secret
 
-Clone of the very useful [One-Time Secret](https://onetimesecret.com) but with a simpler design.
+*Licensed under [AGPL-3](#license)*
 
-This project is mainly used to experiment best development practices, automated tests, continuous deployment...
+A clone of the very useful [One-Time Secret](https://onetimesecret.com) but with a simpler design ([demo](onetimesecret.dreau.fr)).
+
+Features:
+- share a secret that can be read only one time
+- (TODO) secure with client-side encryption: the server has no idea what the secrets are
+- minimalist and beautiful design: no unnecessary features, no advertisement for third-party services or the product itself, no freemium
+- mobile-friendly
+
+Apart from its usefulness for sharing secrets with other people, this project is mainly used to experiment best development practices such as: automated tests, continuous deployment, configuration management, monitoring...
 
 
-## Prerequisites
+## Usage
 
-- go (*tested with 1.10.3*)
-- node (*tested with 10.8.0*)
-- yarn (*tested with 1.9.4*)
+The simplest option is to use the [docker-compose](https://docs.docker.com/compose/) file below to get a service running:
+
+    ```yaml
+    version: '3.3'
+    services:
+      onetimesecret:
+        image: registry.dreau.fr/home/onetimesecret:latest
+        restart: unless-stopped
+        ports:
+          - "8080:5000"
+        environment:
+          OTS_STORE_ADDR: redis:6379
+          OTS_PUBLICURL: http://localhost:8080/
+        networks:
+          - onetimesecret
+      redis:
+        image: redis:4.0-alpine
+        restart: unless-stopped
+        ports:
+          - "6379:6379"
+        networks:
+          - onetimesecret
+
+    networks:
+      onetimesecret:
+    ```
+
+Then you will be able to access OTS at http://localhost:8080/.
+
 
 ## Development
 
-Start the process for compiling Pug to HTML and Stylus to CSS:
-
-    ```sh
-    yarn run gulp dev
-    ```
-
-Start the server:
-
-    ```sh
-    go run main.go
-    ```
+See the [development guide](./DEVELOPMENT.md).
 
 
-### JavaScript
+## License
 
-The application requires no JavaScript on the client side.
-The forms use traditional HTTP POST requests and almost no JavaScript is currently running.
-
-
-### HTML
-
-Pug is used to simplify the markup language and ease the developments of pages.
-
-
-### Styles
-
-Usage of the BEM methodology is recommended through Stylus powerful syntax.
-The pages are currently very simple so each page is viewed as a BEM component.
-
-
-TO BE UPDATED
-
-Recompile CSS when a change is made to the stylus:
-
-    ```sh
-    npx pug -w templates/*.pug
-    npx stylus -w public/assets/main.styl -o public/assets/main.css
-
-    docker run -it --rm --user $UID:$GID \
-        -v $PWD/public:/inputfiles \
-        -v $PWD/public:/outputfiles \
-        gruen/stylus /inputfiles/assets/main.styl -o /outputfiles/assets/main.css
-    ```
-
-## Project Structure
-
-- public: contains all assets that map to
-- templates: contains the *pug* pages that are rendered in the browser
-- styles: contains the *stylus* files for styling the pages
-- store: contains the business and database layer responsible of persisting and retrieving the data from redis
-
-
-## Logo icons
-
-- Edit the vector images in *frontend/src* with Inkscape.
-- Then use the following commands to export the images to png.
-
-    ```
-    inkscape -z -e frontend/public/images/icon-512.png -w 512 -h 512 frontend/src/logo-icon.svg
-    inkscape -z -e frontend/public/images/icon-192.png -w 192 -h 192 frontend/src/logo-icon.svg
-    inkscape -z -e frontend/public/images/icon-32.png -w 32 -h 32 frontend/src/logo-icon.svg
-    ```
+The code is licensed under the [GNU Affero General Public License version 3](./LICENSE.md).
+You can find a human-readable summary on [tldrlegal.com](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)).
