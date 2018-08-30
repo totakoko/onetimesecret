@@ -9,6 +9,7 @@ if ('serviceWorker' in navigator) {
   })
 }
 
+// eslint-disable-next-line no-unused-vars
 class Encryption {
   randomInit () {
     return this.init(crypto.getRandomValues(new Uint8Array(32)), crypto.getRandomValues(new Uint8Array(16)))
@@ -52,6 +53,7 @@ function arrayToBase64url (buffer) {
     .replace(/\//g, '_')
 }
 
+// eslint-disable-next-line no-unused-vars
 function base64urlToArray (base64urlString) {
   let str = window.atob(base64urlString.replace(/-/g, '+').replace(/_/g, '/'))
   let array = new Uint8Array(str.length)
