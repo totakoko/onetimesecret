@@ -54,6 +54,11 @@ The application is available at http://localhost:5000/.
 - Ease the deployment and monitoring by following the [12-factor app principles](https://12factor.net/)
 
 
+### Compatibility
+
+- [Web Cryptography API](https://caniuse.com/#feat=cryptography) : Firefox 61, Chrome 49
+- [Async functions](https://caniuse.com/#search=async) : Firefox 61, Chrome 63
+
 ### JavaScript
 
 The application can work without JavaScript on the client side.

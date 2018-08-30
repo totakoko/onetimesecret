@@ -6,7 +6,8 @@ A clone of the very useful [One-Time Secret](https://onetimesecret.com) but with
 
 Features:
 - share a secret that can be read only one time
-- (TODO) secure with client-side encryption: the server has no idea what the secrets are
+- secure with client-side encryption: the server has no idea what the secrets are
+- also works without JavaScript but then drops client-side encryption support
 - minimalist and beautiful design: no unnecessary features, no advertisement for third-party services or the product itself, no freemium
 - mobile-friendly
 
