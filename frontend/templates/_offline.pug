@@ -1,4 +1,21 @@
-extends layouts/base
+doctype html
+html(lang="en")
+  head
+    link(rel="manifest" href="/manifest.json")
+    link(rel="shortcut icon" href="/images/icon-32.png")
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible" content="ie=edge")
+    meta(name="description" content="Simple secret sharing")
+    meta(name="theme-color" content="#ffffff")
+    title One Time Secret
+    style
+      include:stylus ../styles/main.styl
+  body.ots
+    header.ots-header
+      nav.ots-nav
+        a.ots-a.ots-nav__brand(href="/") One Time Secret
+        a.ots-a.ots-nav__about(href="/about") ?
+    main.ots-content
+      p.ots-offline You are in offline mode. Please turn on the internet connectivity to use the application.
 
-block content
-  p.ots-offline You are in offline mode. Please turn on the internet connectivity to use the application.
