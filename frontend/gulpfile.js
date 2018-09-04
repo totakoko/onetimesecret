@@ -103,4 +103,3 @@ gulp.task('default', ['css', 'html', 'assets', 'go-server'], function () {
   gulp.watch(path.join(templatesDir, '**/*.pug'), ['html'])
   gulp.watch(path.join(publicDir, '**/*'), ['assets'])
 })
-

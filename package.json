@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "gulp",
-    "build": "gulp build",
+    "start": "gulp -f frontend/gulpfile.js --cwd .",
+    "build": "gulp -f frontend/gulpfile.js --cwd . build",
     "lint": "standard",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,8 +26,15 @@
     "gulp-minify-css-names": "^1.4.3",
     "gulp-pug": "^4.0.1",
     "gulp-stylus": "^2.7.0",
+    "husky": "^1.0.0-rc.13",
     "jstransformer-stylus": "^1.5.0",
     "standard": "^11.0.1",
     "tree-kill": "^1.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && go test ./...",
+      "pre-push": "npm run lint && go test ./..."
+    }
   }
 }
