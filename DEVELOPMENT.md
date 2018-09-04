@@ -84,11 +84,12 @@ Traditionnal HTML elements such as links and buttons usually have their own styl
 - Edit the vector images in *frontend/src* with [Inkscape](https://inkscape.org).
 - Then, inside the project root, use the following commands to export the images to png.
 
-    ```
-    inkscape -z -e frontend/public/images/icon-512.png -w 512 -h 512 frontend/src/logo-icon.svg
-    inkscape -z -e frontend/public/images/icon-192.png -w 192 -h 192 frontend/src/logo-icon.svg
-    inkscape -z -e frontend/public/images/icon-32.png -w 32 -h 32 frontend/src/logo-icon.svg
-    ```
+```sh
+inkscape -z frontend/src/logo-icon.svg --export-png frontend/public/images/icon-512.png -w 512 -h 512
+inkscape -z frontend/src/logo-icon.svg --export-png frontend/public/images/icon-192.png -w 192 -h 192
+inkscape -z frontend/src/logo-icon.svg --export-png frontend/public/images/icon-32.png -w 32 -h 32
+inkscape -z frontend/src/icon-lock.svg --export-plain-svg frontend/public/images/icon-lock.svg
+```
 
 
 ## Project Structure
