@@ -30,6 +30,25 @@ function startServer () {
   return serverProcess
 }
 
+function debounce (func, wait) {
+  let lastThis
+  let lastArgs
+  let timerId
+  function wrapper (...args) {
+    lastThis = this
+    lastArgs = args
+    if (timerId) {
+      clearTimeout(timerId)
+    }
+    timerId = setTimeout(invoke, wait)
+  }
+  function invoke () {
+    timerId = null
+    func.apply(lastThis, lastArgs)
+  }
+  return wrapper
+}
+
 gulp.task('assets', function () {
   return gulp.src(path.join(publicDir, '**/*'))
     .pipe(gulp.dest(buildPublicDir))
@@ -53,14 +72,18 @@ gulp.task('html', function () {
 gulp.task('go-server', function () {
   var serverProcess = startServer()
 
-  gulp.watch([
-    '**/*.go',
-    path.join(buildDir, '**/*')
-  ], function () {
-    console.log('Restarting go server...')
-    kill(serverProcess.pid, 'SIGTERM')
-    serverProcess = startServer()
-  })
+  gulp.watch(
+    [
+      '**/*.go',
+      path.join(buildDir, '**/*')
+    ],
+    // debounce is used to limit the server restart signal
+    debounce(function () {
+      console.log('Restarting go server...')
+      kill(serverProcess.pid, 'SIGTERM')
+      serverProcess = startServer()
+    }, 50)
+  )
 })
 
 gulp.task('build', ['css', 'html', 'assets'], function () {
@@ -80,3 +103,4 @@ gulp.task('default', ['css', 'html', 'assets', 'go-server'], function () {
   gulp.watch(path.join(templatesDir, '**/*.pug'), ['html'])
   gulp.watch(path.join(publicDir, '**/*'), ['assets'])
 })
+
