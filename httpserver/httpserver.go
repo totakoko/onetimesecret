@@ -88,7 +88,8 @@ func (s *HTTPServer) TestSecret(c *gin.Context) {
 func (s *HTTPServer) TestCreateSecret(c *gin.Context) {
 	c.Status(http.StatusOK)
 	s.templatesCache["view-secret-link"].Execute(c.Writer, map[string]interface{}{
-		"secretURL": "http://localhost:5000/test/secret",
+		"secretURL":  "http://localhost:5000/test/secret",
+		"expiration": "10 seconds",
 	})
 }
 func (s *HTTPServer) TestGetSecret(c *gin.Context) {

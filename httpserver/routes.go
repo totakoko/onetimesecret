@@ -33,7 +33,8 @@ func (s *HTTPServer) CreateSecret(c *gin.Context) {
 	}
 	c.Status(http.StatusCreated)
 	s.templatesCache["view-secret-link"].Execute(c.Writer, map[string]interface{}{
-		"secretURL": s.PublicURL + "secrets/" + secretKey,
+		"secretURL":  s.PublicURL + "secrets/" + secretKey,
+		"expiration": c.PostForm("expiration") + " seconds",
 	})
 }
 
