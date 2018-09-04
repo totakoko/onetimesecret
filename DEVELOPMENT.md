@@ -59,10 +59,11 @@ The application is available at http://localhost:5000/.
 - [Web Cryptography API](https://caniuse.com/#feat=cryptography) : Firefox 61, Chrome 49
 - [Async functions](https://caniuse.com/#search=async) : Firefox 61, Chrome 63
 
+
 ### JavaScript
 
-The application can work without JavaScript on the client side.
-The forms use traditional HTTP POST requests and almost no JavaScript is currently running.
+The forms use traditional HTTP POST requests so that the application can work without JavaScript on the client side.
+JavaScript enables client-side encryption so it is recommended though not enforced.
 
 
 ### HTML
@@ -76,7 +77,7 @@ The forms use traditional HTTP POST requests and almost no JavaScript is current
 Usage of the BEM methodology is recommended by leveraging the `&` keyword of Stylus.
 The pages are currently very simple so each page is viewed as a BEM component.
 
-
+Traditionnal HTML elements such as links and buttons usually have their own style because they are used in multiple pages.
 
 ### Logo icons
 
@@ -92,6 +93,7 @@ The pages are currently very simple so each page is viewed as a BEM component.
 
 ## Project Structure
 
+- .build: temporary folder containing the compiled assets
 - common: contains interfaces that are used by other packages
 - conf: contains the configuration of the application and its default values
 - frontend: contains all frontend-related stuff
