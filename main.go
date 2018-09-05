@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	helpers.Try(startServer())
+	helpers.TryOrFatal(startServer())
 }
 
 func startServer() error {
@@ -53,7 +53,7 @@ func startServer() error {
 		log.Warn().Msgf("Server stopped")
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Warn().Msgf("Shutting down server...")

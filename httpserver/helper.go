@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"gitlab.com/totakoko/onetimesecret/common/errors"
+	"gitlab.com/totakoko/onetimesecret/helpers"
 )
 
 func sendErrorResponse(c *gin.Context, err error) {
@@ -19,9 +20,9 @@ func (s *HTTPServer) sendErrorPage(c *gin.Context, err error) {
 		"error": err.Error(),
 	}).Msg("Service error")
 	c.Status(getStatusFromError(err))
-	s.templatesCache["error"].Execute(c.Writer, map[string]interface{}{
+	helpers.LogOnError(s.templatesCache["error"].Execute(c.Writer, map[string]interface{}{
 		"error": err.Error(),
-	})
+	}))
 }
 
 func getStatusFromError(err error) int {

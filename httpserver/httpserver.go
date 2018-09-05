@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"gitlab.com/totakoko/onetimesecret/common"
+	"gitlab.com/totakoko/onetimesecret/helpers"
 )
 
 // changes to these paths must be correlated with changes in gulpfile.js
@@ -47,9 +48,9 @@ func (s *HTTPServer) Init() error {
 			"url": c.Request.URL.Path,
 		}).Msg("404 error")
 		c.Status(http.StatusNotFound)
-		s.templatesCache["error"].Execute(c.Writer, map[string]interface{}{
+		helpers.LogOnError(s.templatesCache["error"].Execute(c.Writer, map[string]interface{}{
 			"error": "Page not found... ¯\\_(ツ)_/¯",
-		})
+		}))
 	})
 
 	if err := s.loadTemplates(); err != nil {
@@ -92,21 +93,21 @@ func (s *HTTPServer) Shutdown() error {
 
 func (s *HTTPServer) TestSecret(c *gin.Context) {
 	c.Status(http.StatusOK)
-	s.templatesCache["view-secret"].Execute(c.Writer, map[string]interface{}{
+	helpers.LogOnError(s.templatesCache["view-secret"].Execute(c.Writer, map[string]interface{}{
 		"secret": "mysecret",
-	})
+	}))
 }
 
 func (s *HTTPServer) TestCreateSecret(c *gin.Context) {
 	c.Status(http.StatusOK)
-	s.templatesCache["view-secret-link"].Execute(c.Writer, map[string]interface{}{
+	helpers.LogOnError(s.templatesCache["view-secret-link"].Execute(c.Writer, map[string]interface{}{
 		"secretURL":  "http://localhost:5000/test/secret",
 		"expiration": "10 seconds",
-	})
+	}))
 }
 func (s *HTTPServer) TestGetSecret(c *gin.Context) {
 	c.Status(http.StatusOK)
-	s.templatesCache["get-secret"].Execute(c.Writer, map[string]interface{}{
+	helpers.LogOnError(s.templatesCache["get-secret"].Execute(c.Writer, map[string]interface{}{
 		"secretViewURL": "/secrets/123/view",
-	})
+	}))
 }

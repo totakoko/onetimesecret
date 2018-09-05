@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	"gitlab.com/totakoko/onetimesecret/helpers"
 )
 
 func (s *HTTPServer) loadStaticAssets() error {
@@ -41,5 +42,6 @@ func (s *HTTPServer) serveAsset(c *gin.Context) {
 	assetPath := c.Request.URL.Path
 	assetContent := s.assetsCache[assetPath]
 	c.Writer.Header().Set("Content-Type", mime.TypeByExtension(filepath.Ext(assetPath)))
-	c.Writer.Write(assetContent)
+	_, err := c.Writer.Write(assetContent)
+	helpers.LogOnError(err)
 }
