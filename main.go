@@ -5,9 +5,9 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"gitlab.dreau.fr/home/onetimesecret/conf"
-	"gitlab.dreau.fr/home/onetimesecret/httpserver"
-	"gitlab.dreau.fr/home/onetimesecret/store"
+	"gitlab.com/totakoko/onetimesecret/conf"
+	"gitlab.com/totakoko/onetimesecret/httpserver"
+	"gitlab.com/totakoko/onetimesecret/store"
 )
 
 func main() {

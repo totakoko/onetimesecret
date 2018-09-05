@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/rs/zerolog/log"
-	"gitlab.dreau.fr/home/onetimesecret/common/errors"
-	"gitlab.dreau.fr/home/onetimesecret/conf"
-	"gitlab.dreau.fr/home/onetimesecret/helpers"
+	"gitlab.com/totakoko/onetimesecret/common/errors"
+	"gitlab.com/totakoko/onetimesecret/conf"
+	"gitlab.com/totakoko/onetimesecret/helpers"
 )
 
 // la configuration se trouve dans la package conf, car sinon il y a des cycles d'imports

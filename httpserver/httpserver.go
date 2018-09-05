@@ -8,7 +8,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"gitlab.dreau.fr/home/onetimesecret/common"
+	"gitlab.com/totakoko/onetimesecret/common"
 )
 
 // changes to these paths must be correlated with changes in gulpfile.js

@@ -3,7 +3,7 @@ package httpserver
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"gitlab.dreau.fr/home/onetimesecret/common/errors"
+	"gitlab.com/totakoko/onetimesecret/common/errors"
 )
 
 func sendErrorResponse(c *gin.Context, err error) {

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"gitlab.dreau.fr/home/onetimesecret/conf"
-	"gitlab.dreau.fr/home/onetimesecret/helpers/tests"
+	"gitlab.com/totakoko/onetimesecret/conf"
+	"gitlab.com/totakoko/onetimesecret/helpers/tests"
 )
 
 var (

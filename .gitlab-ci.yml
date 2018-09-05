@@ -1,7 +1,7 @@
 image: golang:1.10
 
 variables:
-  REPO_NAME: gitlab.dreau.fr/home/onetimesecret
+  REPO_NAME: gitlab.com/totakoko/onetimesecret
   HARBOR_REGISTRY: harbor.dreau.fr
   HARBOR_APPLICATION_REPOSITORY: harbor.dreau.fr/home/onetimesecret
 

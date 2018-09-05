@@ -3,7 +3,7 @@ package helpers
 import (
 	"testing"
 
-	"gitlab.dreau.fr/home/onetimesecret/helpers/tests"
+	"gitlab.com/totakoko/onetimesecret/helpers/tests"
 )
 
 func Test_GenerateRandomString(t *testing.T) {

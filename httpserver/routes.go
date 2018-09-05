@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"gitlab.dreau.fr/home/onetimesecret/common/errors"
+	"gitlab.com/totakoko/onetimesecret/common/errors"
 )
 
 func (s *HTTPServer) DisplayHomePage(c *gin.Context) {
