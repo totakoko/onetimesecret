@@ -1,20 +1,21 @@
 package main
 
 import (
+	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gitlab.com/totakoko/onetimesecret/conf"
+	"gitlab.com/totakoko/onetimesecret/helpers"
 	"gitlab.com/totakoko/onetimesecret/httpserver"
 	"gitlab.com/totakoko/onetimesecret/store"
 )
 
 func main() {
-	err := startServer()
-	if err != nil {
-		log.Fatal().Msg(err.Error())
-	}
+	helpers.Try(startServer())
 }
 
 func startServer() error {
@@ -43,5 +44,23 @@ func startServer() error {
 	if err := server.Init(); err != nil {
 		return err
 	}
-	return server.Run(":" + strconv.Itoa(config.ListenPort))
+
+	go func() {
+		err := server.Run(":" + strconv.Itoa(config.ListenPort))
+		if err != http.ErrServerClosed {
+			log.Fatal().Msg(err.Error())
+		}
+		log.Warn().Msgf("Server stopped")
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Warn().Msgf("Shutting down server...")
+	if err := server.Shutdown(); err != nil {
+		return err
+	}
+
+	log.Warn().Msgf("Server exiting")
+	return nil
 }

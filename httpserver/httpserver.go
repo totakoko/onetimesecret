@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"context"
 	"html/template"
 	"net/http"
 	"time"
@@ -19,6 +20,7 @@ type HTTPServer struct {
 	PublicURL string
 	Store     common.Store
 
+	server         *http.Server
 	router         *gin.Engine
 	assetsCache    map[string][]byte
 	templatesCache map[string]*template.Template
@@ -75,7 +77,17 @@ func (s *HTTPServer) Init() error {
 
 func (s *HTTPServer) Run(addr string) error {
 	log.Warn().Msgf("Listening on %s", addr)
-	return s.router.Run(addr)
+	s.server = &http.Server{
+		Addr:    addr,
+		Handler: s.router,
+	}
+	return s.server.ListenAndServe()
+}
+
+func (s *HTTPServer) Shutdown() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	return s.server.Shutdown(ctx)
 }
 
 func (s *HTTPServer) TestSecret(c *gin.Context) {
