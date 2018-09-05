@@ -13,7 +13,7 @@ stages:
 
 lint-go:
   stage: test
-  image: mozgiii/gometalinter-docker:v2-alpine
+  image: mozgiii/gometalinter-docker:v2
   script:
     - fixGoPath
     - gometalinter --vendor --disable=golint ./...
@@ -23,7 +23,7 @@ lint-node:
   image: node:10
   script:
     - yarn install
-    - yarn run lint
+    - yarn run standard
 
 test:
   stage: test
@@ -118,6 +118,23 @@ deploy:
       docker push "$HARBOR_APPLICATION_REPOSITORY:latest"
       echo ""
     fi
+      docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" "$REGISTRY_URL"
+
+  # push each image to the registry
+
+  docker push $BASE_REPO/frps:$FRP_VERSION
+  docker push $BASE_REPO/frps:latest
+  docker push $BASE_REPO/frpc:$FRP_VERSION
+  docker push $BASE_REPO/frpc:latest
+
+  docker push $BASE_REPO/cachet-monitor:$CACHET_MONITOR_VERSION
+  docker push $BASE_REPO/cachet-monitor:latest
+
+  docker push $BASE_REPO/gandi:latest
+  docker push $BASE_REPO/iperf:latest
+  docker push $BASE_REPO/node-selenium-chrome:8
+  docker push $BASE_REPO/sshdeployer:latest
+
   }
 
 before_script:
