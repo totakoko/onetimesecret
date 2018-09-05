@@ -13,10 +13,10 @@ stages:
 
 lint-go:
   stage: test
+  image: mozgiii/gometalinter-docker:v2-alpine
   script:
     - fixGoPath
-    - go fmt ./...
-    - go vet ./...
+    - gometalinter --vendor --disable=golint ./...
 
 lint-node:
   stage: test
@@ -34,7 +34,7 @@ test:
     OTS_STORE_ADDR: bitnami__redis:6379
   script:
     - fixGoPath
-    - go test -race -p 1 ./...
+    - go test -cover -race -p 1 ./...
     - go test -run bench -bench . ./...
 
 build:
