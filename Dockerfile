@@ -5,7 +5,6 @@ WORKDIR /src
 COPY package.json yarn.lock ./
 RUN yarn
 
-COPY gulpfile.js .
 COPY frontend ./frontend/
 RUN yarn run build
 
