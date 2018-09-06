@@ -2,8 +2,7 @@ image: golang:1.10
 
 variables:
   REPO_NAME: gitlab.com/totakoko/onetimesecret
-  HARBOR_REGISTRY: harbor.dreau.fr
-  HARBOR_APPLICATION_REPOSITORY: harbor.dreau.fr/home/onetimesecret
+  DOCKER_REGISTRY_IMAGE: totakoko/onetimesecret
 
 stages:
   - test
@@ -107,33 +106,25 @@ deploy:
     docker push "$CI_APPLICATION_REPOSITORY:latest"
     echo ""
 
-    # Harbor
-    if [[ -n "$HARBOR_REGISTRY_USER" ]]; then
-      echo "Logging to Harbor Container Registry with Harbor credentials..."
-      docker login -u "$HARBOR_REGISTRY_USER" -p "$HARBOR_REGISTRY_PASSWORD" "$HARBOR_REGISTRY"
-      docker tag "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" "$HARBOR_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
-      docker tag "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" "$HARBOR_APPLICATION_REPOSITORY:latest"
-      echo "Pushing to Harbor Container Registry..."
-      docker push "$HARBOR_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
-      docker push "$HARBOR_APPLICATION_REPOSITORY:latest"
-      echo ""
+    echo "Logging to Docker Registry..."
+    if [ -z "$DOCKER_REGISTRY_USER" ]; then
+      echo "DOCKER_REGISTRY_USER must be defined in GitLab variables"
+      exit 1
     fi
-      docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD" "$REGISTRY_URL"
+    if [[ -z "$DOCKER_REGISTRY_PASSWORD" ]]; then
+      echo "DOCKER_REGISTRY_PASSWORD must be defined in GitLab variables"
+      exit 1
+    fi
 
-  # push each image to the registry
+    docker login -u "$DOCKER_REGISTRY_USER" -p "$DOCKER_REGISTRY_PASSWORD"
 
-  docker push $BASE_REPO/frps:$FRP_VERSION
-  docker push $BASE_REPO/frps:latest
-  docker push $BASE_REPO/frpc:$FRP_VERSION
-  docker push $BASE_REPO/frpc:latest
+    docker tag "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" "$DOCKER_REGISTRY_IMAGE:$CI_APPLICATION_TAG"
+    docker tag "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" "$DOCKER_REGISTRY_IMAGE:latest"
 
-  docker push $BASE_REPO/cachet-monitor:$CACHET_MONITOR_VERSION
-  docker push $BASE_REPO/cachet-monitor:latest
-
-  docker push $BASE_REPO/gandi:latest
-  docker push $BASE_REPO/iperf:latest
-  docker push $BASE_REPO/node-selenium-chrome:8
-  docker push $BASE_REPO/sshdeployer:latest
+    echo "Pushing to Docker Registry..."
+    docker push "$DOCKER_REGISTRY_IMAGE:$CI_APPLICATION_TAG"
+    docker push "$DOCKER_REGISTRY_IMAGE:latest"
+    echo ""
 
   }
 
