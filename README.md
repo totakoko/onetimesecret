@@ -24,7 +24,7 @@ The simplest option is to use the [docker-compose](https://docs.docker.com/compo
 version: '3.3'
 services:
   onetimesecret:
-    image: registry.dreau.fr/home/onetimesecret:latest
+    image: totakoko/onetimesecret:latest
     restart: unless-stopped
     ports:
       - "8080:5000"
