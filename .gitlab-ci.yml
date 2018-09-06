@@ -15,7 +15,7 @@ lint-go:
   image: mozgiii/gometalinter-docker:v2
   script:
     - fixGoPath
-    - gometalinter --vendor --disable=golint ./...
+    - gometalinter --deadline 5m --vendor --disable=golint ./...
 
 lint-node:
   stage: test
