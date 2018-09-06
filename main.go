@@ -19,6 +19,7 @@ func main() {
 }
 
 func startServer() error {
+	zerolog.TimeFieldFormat = ""
 	log.Info().Msg("Starting server")
 
 	config, err := conf.New()

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/rs/zerolog"
 )
 
 type Configuration struct {
@@ -25,7 +24,6 @@ type StoreConfig struct {
 }
 
 func New() (Configuration, error) {
-	zerolog.TimeFieldFormat = ""
 	var conf Configuration
 	err := envconfig.Process("OTS", &conf)
 	if err != nil {
