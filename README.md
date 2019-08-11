@@ -2,7 +2,7 @@
 
 *Licensed under [AGPL-3](#license)*
 
-A clone of the very useful [One-Time Secret](https://onetimesecret.com) but with a simpler design ([demo](https://onetimesecret.dreau.fr)).
+A clone of the very useful [One-Time Secret](https://onetimesecret.com) but with a simpler design ([demo](https://secret.totakoko.com)).
 
 Features:
 - share a secret that can be read only one time
