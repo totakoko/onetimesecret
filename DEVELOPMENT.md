@@ -4,7 +4,7 @@
 
 Install these software:
 
-- [Go](https://golang.org/) (*tested with 1.10.3*)
+- [Go](https://golang.org/) (*tested with 1.12.7*)
 - [Node.js](https://nodejs.org/) (*tested with 10.8.0*)
 - [Yarn](https://yarnpkg.com) (*tested with 1.9.4*)
 - [Dep](https://golang.github.io/dep/) (*tested with 0.5.0*)

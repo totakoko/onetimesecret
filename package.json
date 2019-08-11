@@ -9,12 +9,12 @@
   "scripts": {
     "start": "gulp -f frontend/gulpfile.js --cwd .",
     "build": "gulp -f frontend/gulpfile.js --cwd . build",
-    "lint": "standard && gometalinter --vendor --disable=golint ./...",
+    "lint": "standard && golangci-lint run",
     "test": "go test -cover -race -p 1 ./..."
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.dreau.fr:home/onetimesecret.git"
+    "url": "git@gitlab.com:totakoko/onetimesecret.git"
   },
   "author": "",
   "license": "ISC",

@@ -1,4 +1,4 @@
-image: golang:1.10
+image: golang:1.12
 
 variables:
   REPO_NAME: gitlab.com/totakoko/onetimesecret
@@ -12,10 +12,10 @@ stages:
 
 lint-go:
   stage: test
-  image: mozgiii/gometalinter-docker:v2
+  image: golangci/golangci-lint:v1.17.1
   script:
     - fixGoPath
-    - gometalinter --deadline 5m --vendor --disable=golint ./...
+    - golangci-lint run
 
 lint-node:
   stage: test
@@ -58,15 +58,14 @@ build-docker:
 
 deploy:
   stage: deploy
-  image: totakoko/sshdeployer
-  variables:
-    SERVER_HOST: root@dreau.fr
-    SERVER_PORT: 2222
+  image:
+    name: totakoko/compose-deploy
+    entrypoint: ['']
   script:
-    - /remote "cd /srv/config/onetimesecret && docker-compose pull server && docker-compose stop server && docker-compose up -d server"
+    - MODULES_ROOT=$PWD compose-deploy update-module onetimesecret server
   environment:
     name: production
-    url: https://onetimesecret.dreau.fr
+    url: https://secret.totakoko.com
   # Disable cache and previous artifacts
   cache: {}
   dependencies: []

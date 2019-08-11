@@ -1,4 +1,4 @@
-FROM node:10.8-stretch AS builder-node
+FROM node:10.16-stretch AS builder-node
 
 WORKDIR /src
 
@@ -9,7 +9,7 @@ COPY frontend ./frontend/
 RUN yarn run build
 
 
-FROM golang:1.10-alpine AS builder-go
+FROM golang:1.12-alpine AS builder-go
 
 WORKDIR /go/src/gitlab.com/totakoko/onetimesecret
 COPY . .
