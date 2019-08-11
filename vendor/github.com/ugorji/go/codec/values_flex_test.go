@@ -1,4 +1,4 @@
-/* // +build testing */
+// comment this out // // + build testing
 
 // Copyright (c) 2012-2018 Ugorji Nwoke. All rights reserved.
 // Use of this source code is governed by a MIT license found in the LICENSE file.
@@ -6,6 +6,7 @@
 package codec
 
 import (
+	"strconv"
 	"strings"
 	"time"
 )
@@ -17,8 +18,69 @@ const teststrucflexChanCap = 64
 // that other engines may not support or may barf upon
 // e.g. custom extensions for wrapped types, maps with non-string keys, etc.
 
+// some funky types to test codecgen
+
+type codecgenA struct {
+	ZZ []byte
+}
+type codecgenB struct {
+	AA codecgenA
+}
+type codecgenC struct {
+	_struct struct{} `codec:",omitempty"`
+	BB      codecgenB
+}
+
+type TestCodecgenG struct {
+	TestCodecgenG int
+}
+type codecgenH struct {
+	TestCodecgenG
+}
+type codecgenI struct {
+	codecgenH
+}
+
+type codecgenK struct {
+	X int
+	Y string
+}
+type codecgenL struct {
+	X int
+	Y uint32
+}
+type codecgenM struct {
+	codecgenK
+	codecgenL
+}
+
+// some types to test struct keytype
+
+type testStrucKeyTypeT0 struct {
+	_struct struct{}
+	F       int
+}
+type testStrucKeyTypeT1 struct {
+	_struct struct{} `codec:",string"`
+	F       int      `codec:"FFFF"`
+}
+type testStrucKeyTypeT2 struct {
+	_struct struct{} `codec:",int"`
+	F       int      `codec:"-1"`
+}
+type testStrucKeyTypeT3 struct {
+	_struct struct{} `codec:",uint"`
+	F       int      `codec:"1"`
+}
+type testStrucKeyTypeT4 struct {
+	_struct struct{} `codec:",float"`
+	F       int      `codec:"2.5"`
+}
+
 // Some unused types just stored here
+
 type Bbool bool
+type Aarray [1]string
 type Sstring string
 type Sstructsmall struct {
 	A int
@@ -66,6 +128,56 @@ type AnonInTestStrucIntf struct {
 	Tptr   *time.Time
 }
 
+type missingFielderT1 struct {
+	S string
+	B bool
+	f float64
+	i int64
+}
+
+func (t *missingFielderT1) CodecMissingField(field []byte, value interface{}) bool {
+	switch string(field) {
+	case "F":
+		t.f = value.(float64)
+	case "I":
+		t.i = value.(int64)
+	default:
+		return false
+	}
+	return true
+}
+
+func (t *missingFielderT1) CodecMissingFields() map[string]interface{} {
+	return map[string]interface{}{"F": t.f, "I": t.i}
+}
+
+type missingFielderT2 struct {
+	S string
+	B bool
+	F float64
+	I int64
+}
+
+type testSelfExtHelper struct {
+	S string
+	I int64
+	B bool
+}
+
+type TestSelfExtImpl struct {
+	testSelfExtHelper
+}
+
+type TestSelfExtImpl2 struct {
+	M string
+	O bool
+}
+
+type TestTwoNakedInterfaces struct {
+	A interface{}
+	B interface{}
+}
+
 var testWRepeated512 wrapBytes
 var testStrucTime = time.Date(2012, 2, 2, 2, 2, 2, 2000, time.UTC).UTC()
 
@@ -89,6 +201,10 @@ type TestStrucFlex struct {
 	Mfwss   map[float64]wrapStringSlice
 	Mf32wss map[float32]wrapStringSlice
 	Mui2wss map[uint64]wrapStringSlice
+
+	// DecodeNaked bombs because stringUint64T is decoded as a map,
+	// and a map cannot be the key type of a map.
+	// Ensure this is set to nil if decoding into a nil interface{}.
 	Msu2wss map[stringUint64T]wrapStringSlice
 
 	Ci64       wrapInt64
@@ -99,6 +215,11 @@ type TestStrucFlex struct {
 
 	Ui64array      [4]uint64
 	Ui64slicearray []*[4]uint64
+
+	SintfAarray []interface{}
+
+	// Ensure this is set to nil if decoding into a nil interface{}.
+	MstrUi64TSelf map[stringUint64T]*stringUint64T
 
 	// make this a ptr, so that it could be set or not.
 	// for comparison (e.g. with msgp), give it a struct tag (so it is not inlined),
@@ -146,6 +267,15 @@ func newTestStrucFlex(depth, n int, bench, useInterface, useStringKeyOnly bool) 
 			5.0: []wrapString{"1.0", "2.0", "3.0", "4.0", "5.0"},
 			3.0: []wrapString{"1.0", "2.0", "3.0"},
 		},
+
+		// DecodeNaked bombs here, because the stringUint64T is decoded as a map,
+		// and a map cannot be the key type of a map.
+		// Ensure this is set to nil if decoding into a nil interface{}.
+		Msu2wss: map[stringUint64T]wrapStringSlice{
+			stringUint64T{"5", 5}: []wrapString{"1", "2", "3", "4", "5"},
+			stringUint64T{"3", 3}: []wrapString{"1", "2", "3"},
+		},
+
 		Mis: map[int]string{
 			1:   "one",
 			22:  "twenty two",
@@ -169,8 +299,16 @@ func newTestStrucFlex(depth, n int, bench, useInterface, useStringKeyOnly bool) 
 		Swrapuint8: []wrapUint8{
 			'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
 		},
-		Ui64array:   [4]uint64{4, 16, 64, 256},
-		ArrStrUi64T: [4]stringUint64T{{"4", 4}, {"3", 3}, {"2", 2}, {"1", 1}},
+		Ui64array:     [4]uint64{4, 16, 64, 256},
+		ArrStrUi64T:   [4]stringUint64T{{"4", 4}, {"3", 3}, {"2", 2}, {"1", 1}},
+		SintfAarray:   []interface{}{Aarray{"s"}},
+		MstrUi64TSelf: make(map[stringUint64T]*stringUint64T, numStrUi64T),
+	}
+
+	for i := uint64(0); i < numStrUi64T; i++ {
+		ss := stringUint64T{S: strings.Repeat(strconv.FormatUint(i, 10), 4), U: i}
+		// Ensure this is set to nil if decoding into a nil interface{}.
+		ts.MstrUi64TSelf[ss] = &ss
 	}
 
 	numChanSend := cap(ts.Chstr) / 4 // 8

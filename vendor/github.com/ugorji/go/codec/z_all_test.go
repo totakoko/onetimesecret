@@ -34,20 +34,14 @@ import "testing"
 
 func testGroupResetFlags() {
 	testUseMust = false
-	testCanonical = false
-	testUseMust = false
-	testInternStr = false
 	testUseIoEncDec = -1
-	testStructToArray = false
-	testCheckCircRef = false
 	testUseReset = false
 	testMaxInitLen = 0
 	testUseIoWrapper = false
 	testNumRepeatString = 8
-	testEncodeOptions.RecursiveEmptyCheck = false
-	testDecodeOptions.MapValueReset = false
-	testUseIoEncDec = -1
 	testDepth = 0
+	testDecodeOptions = DecodeOptions{}
+	testEncodeOptions = EncodeOptions{}
 }
 
 func testSuite(t *testing.T, f func(t *testing.T)) {
@@ -56,26 +50,37 @@ func testSuite(t *testing.T, f func(t *testing.T)) {
 
 	testReinit() // so flag.Parse() is called first, and never called again
 
-	testDecodeOptions = DecodeOptions{}
-	testEncodeOptions = EncodeOptions{}
-
 	testGroupResetFlags()
 
 	testReinit()
 	t.Run("optionsFalse", f)
 
-	testCanonical = true
 	testUseMust = true
-	testInternStr = true
 	testUseIoEncDec = 0
-	testStructToArray = true
-	testCheckCircRef = true
 	testUseReset = true
+
+	// xdebugf("with StructToArray=true")
+	testDecodeOptions.InternString = true
 	testDecodeOptions.MapValueReset = true
+	// testDecodeOptions.SignedInteger = true
+	// testDecodeOptions.SliceElementReset = true
+	// testDecodeOptions.InterfaceReset = true
+	// testDecodeOptions.PreferArrayOverSlice = true
+	// testDecodeOptions.DeleteOnNilMapValue = true
+	// testDecodeOptions.RawToString = true
+
+	testEncodeOptions.StructToArray = true
+	testEncodeOptions.Canonical = true
+	testEncodeOptions.CheckCircularRef = true
 	testEncodeOptions.RecursiveEmptyCheck = true
+	// testEncodeOptions.Raw = true
+	// testEncodeOptions.StringToRaw = true
+
 	testReinit()
 	t.Run("optionsTrue", f)
 
+	// xdebugf("setting StructToArray=false")
+	testEncodeOptions.StructToArray = false
 	testDepth = 6
 	testReinit()
 	t.Run("optionsTrue-deepstruct", f)
@@ -86,7 +91,7 @@ func testSuite(t *testing.T, f func(t *testing.T)) {
 	testReinit()
 	t.Run("optionsTrue-ioWrapper", f)
 
-	testUseIoEncDec = -1
+	// testUseIoEncDec = -1
 
 	// make buffer small enough so that we have to re-fill multiple times.
 	testSkipRPCTests = true
@@ -128,120 +133,15 @@ func testCodecGroup(t *testing.T) {
 	// println("running testcodecsuite")
 	// <setup code>
 
-	t.Run("TestBincCodecsTable", TestBincCodecsTable)
-	t.Run("TestBincCodecsMisc", TestBincCodecsMisc)
-	t.Run("TestBincCodecsEmbeddedPointer", TestBincCodecsEmbeddedPointer)
-	t.Run("TestBincStdEncIntf", TestBincStdEncIntf)
-	t.Run("TestBincMammoth", TestBincMammoth)
-	t.Run("TestSimpleCodecsTable", TestSimpleCodecsTable)
-	t.Run("TestSimpleCodecsMisc", TestSimpleCodecsMisc)
-	t.Run("TestSimpleCodecsEmbeddedPointer", TestSimpleCodecsEmbeddedPointer)
-	t.Run("TestSimpleStdEncIntf", TestSimpleStdEncIntf)
-	t.Run("TestSimpleMammoth", TestSimpleMammoth)
-	t.Run("TestMsgpackCodecsTable", TestMsgpackCodecsTable)
-	t.Run("TestMsgpackCodecsMisc", TestMsgpackCodecsMisc)
-	t.Run("TestMsgpackCodecsEmbeddedPointer", TestMsgpackCodecsEmbeddedPointer)
-	t.Run("TestMsgpackStdEncIntf", TestMsgpackStdEncIntf)
-	t.Run("TestMsgpackMammoth", TestMsgpackMammoth)
-	t.Run("TestCborCodecsTable", TestCborCodecsTable)
-	t.Run("TestCborCodecsMisc", TestCborCodecsMisc)
-	t.Run("TestCborCodecsEmbeddedPointer", TestCborCodecsEmbeddedPointer)
-	t.Run("TestCborMapEncodeForCanonical", TestCborMapEncodeForCanonical)
-	t.Run("TestCborCodecChan", TestCborCodecChan)
-	t.Run("TestCborStdEncIntf", TestCborStdEncIntf)
-	t.Run("TestCborMammoth", TestCborMammoth)
-	t.Run("TestJsonCodecsTable", TestJsonCodecsTable)
-	t.Run("TestJsonCodecsMisc", TestJsonCodecsMisc)
-	t.Run("TestJsonCodecsEmbeddedPointer", TestJsonCodecsEmbeddedPointer)
-	t.Run("TestJsonCodecChan", TestJsonCodecChan)
-	t.Run("TestJsonStdEncIntf", TestJsonStdEncIntf)
-	t.Run("TestJsonMammoth", TestJsonMammoth)
-	t.Run("TestJsonRaw", TestJsonRaw)
-	t.Run("TestBincRaw", TestBincRaw)
-	t.Run("TestMsgpackRaw", TestMsgpackRaw)
-	t.Run("TestSimpleRaw", TestSimpleRaw)
-	t.Run("TestCborRaw", TestCborRaw)
-	t.Run("TestAllEncCircularRef", TestAllEncCircularRef)
-	t.Run("TestAllAnonCycle", TestAllAnonCycle)
-	t.Run("TestBincRpcGo", TestBincRpcGo)
-	t.Run("TestSimpleRpcGo", TestSimpleRpcGo)
-	t.Run("TestMsgpackRpcGo", TestMsgpackRpcGo)
-	t.Run("TestCborRpcGo", TestCborRpcGo)
-	t.Run("TestJsonRpcGo", TestJsonRpcGo)
-	t.Run("TestMsgpackRpcSpec", TestMsgpackRpcSpec)
-	t.Run("TestBincUnderlyingType", TestBincUnderlyingType)
-	t.Run("TestJsonLargeInteger", TestJsonLargeInteger)
-	t.Run("TestJsonDecodeNonStringScalarInStringContext", TestJsonDecodeNonStringScalarInStringContext)
-	t.Run("TestJsonEncodeIndent", TestJsonEncodeIndent)
+	testJsonGroup(t)
+	testBincGroup(t)
+	testCborGroup(t)
+	testMsgpackGroup(t)
+	testSimpleGroup(t)
+	// testSimpleMammothGroup(t)
+	// testRpcGroup(t)
+	testNonHandlesGroup(t)
 
-	t.Run("TestJsonSwallowAndZero", TestJsonSwallowAndZero)
-	t.Run("TestCborSwallowAndZero", TestCborSwallowAndZero)
-	t.Run("TestMsgpackSwallowAndZero", TestMsgpackSwallowAndZero)
-	t.Run("TestBincSwallowAndZero", TestBincSwallowAndZero)
-	t.Run("TestSimpleSwallowAndZero", TestSimpleSwallowAndZero)
-	t.Run("TestJsonRawExt", TestJsonRawExt)
-	t.Run("TestCborRawExt", TestCborRawExt)
-	t.Run("TestMsgpackRawExt", TestMsgpackRawExt)
-	t.Run("TestBincRawExt", TestBincRawExt)
-	t.Run("TestSimpleRawExt", TestSimpleRawExt)
-	t.Run("TestJsonMapStructKey", TestJsonMapStructKey)
-	t.Run("TestCborMapStructKey", TestCborMapStructKey)
-	t.Run("TestMsgpackMapStructKey", TestMsgpackMapStructKey)
-	t.Run("TestBincMapStructKey", TestBincMapStructKey)
-	t.Run("TestSimpleMapStructKey", TestSimpleMapStructKey)
-	t.Run("TestJsonDecodeNilMapValue", TestJsonDecodeNilMapValue)
-	t.Run("TestCborDecodeNilMapValue", TestCborDecodeNilMapValue)
-	t.Run("TestMsgpackDecodeNilMapValue", TestMsgpackDecodeNilMapValue)
-	t.Run("TestBincDecodeNilMapValue", TestBincDecodeNilMapValue)
-	t.Run("TestSimpleDecodeNilMapValue", TestSimpleDecodeNilMapValue)
-	t.Run("TestJsonEmbeddedFieldPrecedence", TestJsonEmbeddedFieldPrecedence)
-	t.Run("TestCborEmbeddedFieldPrecedence", TestCborEmbeddedFieldPrecedence)
-	t.Run("TestMsgpackEmbeddedFieldPrecedence", TestMsgpackEmbeddedFieldPrecedence)
-	t.Run("TestBincEmbeddedFieldPrecedence", TestBincEmbeddedFieldPrecedence)
-	t.Run("TestSimpleEmbeddedFieldPrecedence", TestSimpleEmbeddedFieldPrecedence)
-	t.Run("TestJsonLargeContainerLen", TestJsonLargeContainerLen)
-	t.Run("TestCborLargeContainerLen", TestCborLargeContainerLen)
-	t.Run("TestMsgpackLargeContainerLen", TestMsgpackLargeContainerLen)
-	t.Run("TestBincLargeContainerLen", TestBincLargeContainerLen)
-	t.Run("TestSimpleLargeContainerLen", TestSimpleLargeContainerLen)
-	t.Run("TestJsonMammothMapsAndSlices", TestJsonMammothMapsAndSlices)
-	t.Run("TestCborMammothMapsAndSlices", TestCborMammothMapsAndSlices)
-	t.Run("TestMsgpackMammothMapsAndSlices", TestMsgpackMammothMapsAndSlices)
-	t.Run("TestBincMammothMapsAndSlices", TestBincMammothMapsAndSlices)
-	t.Run("TestSimpleMammothMapsAndSlices", TestSimpleMammothMapsAndSlices)
-	t.Run("TestJsonTime", TestJsonTime)
-	t.Run("TestCborTime", TestCborTime)
-	t.Run("TestMsgpackTime", TestMsgpackTime)
-	t.Run("TestBincTime", TestBincTime)
-	t.Run("TestSimpleTime", TestSimpleTime)
-	t.Run("TestJsonUintToInt", TestJsonUintToInt)
-	t.Run("TestCborUintToInt", TestCborUintToInt)
-	t.Run("TestMsgpackUintToInt", TestMsgpackUintToInt)
-	t.Run("TestBincUintToInt", TestBincUintToInt)
-	t.Run("TestSimpleUintToInt", TestSimpleUintToInt)
-	t.Run("TestJsonDifferentMapOrSliceType", TestJsonDifferentMapOrSliceType)
-	t.Run("TestCborDifferentMapOrSliceType", TestCborDifferentMapOrSliceType)
-	t.Run("TestMsgpackDifferentMapOrSliceType", TestMsgpackDifferentMapOrSliceType)
-	t.Run("TestBincDifferentMapOrSliceType", TestBincDifferentMapOrSliceType)
-	t.Run("TestSimpleDifferentMapOrSliceType", TestSimpleDifferentMapOrSliceType)
-	t.Run("TestJsonScalars", TestJsonScalars)
-	t.Run("TestCborScalars", TestCborScalars)
-	t.Run("TestMsgpackScalars", TestMsgpackScalars)
-	t.Run("TestBincScalars", TestBincScalars)
-	t.Run("TestSimpleScalars", TestSimpleScalars)
-	t.Run("TestJsonOmitempty", TestJsonOmitempty)
-	t.Run("TestCborOmitempty", TestCborOmitempty)
-	t.Run("TestMsgpackOmitempty", TestMsgpackOmitempty)
-	t.Run("TestBincOmitempty", TestBincOmitempty)
-	t.Run("TestSimpleOmitempty", TestSimpleOmitempty)
-	t.Run("TestJsonIntfMapping", TestJsonIntfMapping)
-	t.Run("TestCborIntfMapping", TestCborIntfMapping)
-	t.Run("TestMsgpackIntfMapping", TestMsgpackIntfMapping)
-	t.Run("TestBincIntfMapping", TestBincIntfMapping)
-	t.Run("TestSimpleIntfMapping", TestSimpleIntfMapping)
-
-	t.Run("TestJsonInvalidUnicode", TestJsonInvalidUnicode)
-	t.Run("TestCborHalfFloat", TestCborHalfFloat)
 	// <tear-down code>
 }
 
@@ -251,7 +151,7 @@ func testJsonGroup(t *testing.T) {
 	t.Run("TestJsonCodecsEmbeddedPointer", TestJsonCodecsEmbeddedPointer)
 	t.Run("TestJsonCodecChan", TestJsonCodecChan)
 	t.Run("TestJsonStdEncIntf", TestJsonStdEncIntf)
-	t.Run("TestJsonMammoth", TestJsonMammoth)
+	t.Run("TestJsonMammothA", TestJsonMammothA)
 	t.Run("TestJsonRaw", TestJsonRaw)
 	t.Run("TestJsonRpcGo", TestJsonRpcGo)
 	t.Run("TestJsonLargeInteger", TestJsonLargeInteger)
@@ -265,13 +165,23 @@ func testJsonGroup(t *testing.T) {
 	t.Run("TestJsonEmbeddedFieldPrecedence", TestJsonEmbeddedFieldPrecedence)
 	t.Run("TestJsonLargeContainerLen", TestJsonLargeContainerLen)
 	t.Run("TestJsonMammothMapsAndSlices", TestJsonMammothMapsAndSlices)
-	t.Run("TestJsonInvalidUnicode", TestJsonInvalidUnicode)
 	t.Run("TestJsonTime", TestJsonTime)
 	t.Run("TestJsonUintToInt", TestJsonUintToInt)
 	t.Run("TestJsonDifferentMapOrSliceType", TestJsonDifferentMapOrSliceType)
 	t.Run("TestJsonScalars", TestJsonScalars)
 	t.Run("TestJsonOmitempty", TestJsonOmitempty)
 	t.Run("TestJsonIntfMapping", TestJsonIntfMapping)
+	t.Run("TestJsonMissingFields", TestJsonMissingFields)
+	t.Run("TestJsonMaxDepth", TestJsonMaxDepth)
+	t.Run("TestJsonSelfExt", TestJsonSelfExt)
+	t.Run("TestJsonBytesEncodedAsArray", TestJsonBytesEncodedAsArray)
+	t.Run("TestJsonStrucEncDec", TestJsonStrucEncDec)
+	t.Run("TestJsonMapEncodeForCanonical", TestJsonMapEncodeForCanonical)
+	t.Run("TestJsonRawToStringToRawEtc", TestJsonRawToStringToRawEtc)
+	t.Run("TestJsonStructKeyType", TestJsonStructKeyType)
+	t.Run("TestJsonPreferArrayOverSlice", TestJsonPreferArrayOverSlice)
+
+	t.Run("TestJsonInvalidUnicode", TestJsonInvalidUnicode)
 }
 
 func testBincGroup(t *testing.T) {
@@ -281,7 +191,7 @@ func testBincGroup(t *testing.T) {
 	t.Run("TestBincStdEncIntf", TestBincStdEncIntf)
 	t.Run("TestBincMammoth", TestBincMammoth)
 	t.Run("TestBincRaw", TestBincRaw)
-	t.Run("TestSimpleRpcGo", TestSimpleRpcGo)
+	t.Run("TestBincRpcGo", TestBincRpcGo)
 	t.Run("TestBincUnderlyingType", TestBincUnderlyingType)
 
 	t.Run("TestBincSwallowAndZero", TestBincSwallowAndZero)
@@ -297,13 +207,21 @@ func testBincGroup(t *testing.T) {
 	t.Run("TestBincScalars", TestBincScalars)
 	t.Run("TestBincOmitempty", TestBincOmitempty)
 	t.Run("TestBincIntfMapping", TestBincIntfMapping)
+	t.Run("TestBincMissingFields", TestBincMissingFields)
+	t.Run("TestBincMaxDepth", TestBincMaxDepth)
+	t.Run("TestBincSelfExt", TestBincSelfExt)
+	t.Run("TestBincBytesEncodedAsArray", TestBincBytesEncodedAsArray)
+	t.Run("TestBincStrucEncDec", TestBincStrucEncDec)
+	t.Run("TestBincMapEncodeForCanonical", TestBincMapEncodeForCanonical)
+	t.Run("TestBincRawToStringToRawEtc", TestBincRawToStringToRawEtc)
+	t.Run("TestBincStructKeyType", TestBincStructKeyType)
+	t.Run("TestBincPreferArrayOverSlice", TestBincPreferArrayOverSlice)
 }
 
 func testCborGroup(t *testing.T) {
 	t.Run("TestCborCodecsTable", TestCborCodecsTable)
 	t.Run("TestCborCodecsMisc", TestCborCodecsMisc)
 	t.Run("TestCborCodecsEmbeddedPointer", TestCborCodecsEmbeddedPointer)
-	t.Run("TestCborMapEncodeForCanonical", TestCborMapEncodeForCanonical)
 	t.Run("TestCborCodecChan", TestCborCodecChan)
 	t.Run("TestCborStdEncIntf", TestCborStdEncIntf)
 	t.Run("TestCborMammoth", TestCborMammoth)
@@ -323,7 +241,18 @@ func testCborGroup(t *testing.T) {
 	t.Run("TestCborScalars", TestCborScalars)
 	t.Run("TestCborOmitempty", TestCborOmitempty)
 	t.Run("TestCborIntfMapping", TestCborIntfMapping)
+	t.Run("TestCborMissingFields", TestCborMissingFields)
+	t.Run("TestCborMaxDepth", TestCborMaxDepth)
+	t.Run("TestCborSelfExt", TestCborSelfExt)
+	t.Run("TestCborBytesEncodedAsArray", TestCborBytesEncodedAsArray)
+	t.Run("TestCborStrucEncDec", TestCborStrucEncDec)
+	t.Run("TestCborMapEncodeForCanonical", TestCborMapEncodeForCanonical)
+	t.Run("TestCborRawToStringToRawEtc", TestCborRawToStringToRawEtc)
+	t.Run("TestCborStructKeyType", TestCborStructKeyType)
+	t.Run("TestCborPreferArrayOverSlice", TestCborPreferArrayOverSlice)
+
 	t.Run("TestCborHalfFloat", TestCborHalfFloat)
+	t.Run("TestCborSkipTags", TestCborSkipTags)
 }
 
 func testMsgpackGroup(t *testing.T) {
@@ -348,6 +277,17 @@ func testMsgpackGroup(t *testing.T) {
 	t.Run("TestMsgpackScalars", TestMsgpackScalars)
 	t.Run("TestMsgpackOmitempty", TestMsgpackOmitempty)
 	t.Run("TestMsgpackIntfMapping", TestMsgpackIntfMapping)
+	t.Run("TestMsgpackMissingFields", TestMsgpackMissingFields)
+	t.Run("TestMsgpackMaxDepth", TestMsgpackMaxDepth)
+	t.Run("TestMsgpackSelfExt", TestMsgpackSelfExt)
+	t.Run("TestMsgpackBytesEncodedAsArray", TestMsgpackBytesEncodedAsArray)
+	t.Run("TestMsgpackStrucEncDec", TestMsgpackStrucEncDec)
+	t.Run("TestMsgpackMapEncodeForCanonical", TestMsgpackMapEncodeForCanonical)
+	t.Run("TestMsgpackRawToStringToRawEtc", TestMsgpackRawToStringToRawEtc)
+	t.Run("TestMsgpackStructKeyType", TestMsgpackStructKeyType)
+	t.Run("TestMsgpackPreferArrayOverSlice", TestMsgpackPreferArrayOverSlice)
+
+	t.Run("TestMsgpackDecodeMapAndExtSizeMismatch", TestMsgpackDecodeMapAndExtSizeMismatch)
 }
 
 func testSimpleGroup(t *testing.T) {
@@ -371,6 +311,15 @@ func testSimpleGroup(t *testing.T) {
 	t.Run("TestSimpleScalars", TestSimpleScalars)
 	t.Run("TestSimpleOmitempty", TestSimpleOmitempty)
 	t.Run("TestSimpleIntfMapping", TestSimpleIntfMapping)
+	t.Run("TestSimpleMissingFields", TestSimpleMissingFields)
+	t.Run("TestSimpleMaxDepth", TestSimpleMaxDepth)
+	t.Run("TestSimpleSelfExt", TestSimpleSelfExt)
+	t.Run("TestSimpleBytesEncodedAsArray", TestSimpleBytesEncodedAsArray)
+	t.Run("TestSimpleStrucEncDec", TestSimpleStrucEncDec)
+	t.Run("TestSimpleMapEncodeForCanonical", TestSimpleMapEncodeForCanonical)
+	t.Run("TestSimpleRawToStringToRawEtc", TestSimpleRawToStringToRawEtc)
+	t.Run("TestSimpleStructKeyType", TestSimpleStructKeyType)
+	t.Run("TestSimplePreferArrayOverSlice", TestSimplePreferArrayOverSlice)
 }
 
 func testSimpleMammothGroup(t *testing.T) {
@@ -384,6 +333,17 @@ func testRpcGroup(t *testing.T) {
 	t.Run("TestCborRpcGo", TestCborRpcGo)
 	t.Run("TestJsonRpcGo", TestJsonRpcGo)
 	t.Run("TestMsgpackRpcSpec", TestMsgpackRpcSpec)
+}
+
+func testNonHandlesGroup(t *testing.T) {
+	// grep "func Test" codec_test.go | grep -v -E '(Cbor|Json|Simple|Msgpack|Binc)'
+	t.Run("TestBufioDecReader", TestBufioDecReader)
+	t.Run("TestAtomic", TestAtomic)
+	t.Run("TestAllEncCircularRef", TestAllEncCircularRef)
+	t.Run("TestAllAnonCycle", TestAllAnonCycle)
+	t.Run("TestMultipleEncDec", TestMultipleEncDec)
+	t.Run("TestAllErrWriter", TestAllErrWriter)
+	t.Run("TestMapRangeIndex", TestMapRangeIndex)
 }
 
 func TestCodecSuite(t *testing.T) {
@@ -414,11 +374,9 @@ func TestCodecSuite(t *testing.T) {
 		oldIndent, oldCharsAsis, oldPreferFloat, oldMapKeyAsString
 
 	oldIndefLen := testCborH.IndefiniteLength
-
 	testCborH.IndefiniteLength = true
 	testReinit()
 	t.Run("cbor-indefinitelength", testCborGroup)
-
 	testCborH.IndefiniteLength = oldIndefLen
 
 	oldTimeRFC3339 := testCborH.TimeRFC3339
@@ -426,6 +384,12 @@ func TestCodecSuite(t *testing.T) {
 	testReinit()
 	t.Run("cbor-rfc3339", testCborGroup)
 	testCborH.TimeRFC3339 = oldTimeRFC3339
+
+	oldSkipUnexpectedTags := testCborH.SkipUnexpectedTags
+	testCborH.SkipUnexpectedTags = !testCborH.SkipUnexpectedTags
+	testReinit()
+	t.Run("cbor-skip-tags", testCborGroup)
+	testCborH.SkipUnexpectedTags = oldSkipUnexpectedTags
 
 	oldSymbols := testBincH.AsSymbols
 
